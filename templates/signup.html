@@ -1,20 +1,19 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up Page</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-    <!-- <style>
+    <style>
         .signup-container {
-            max-width: 800px;
+            max-width:1000px;
             margin-top: 100px;
             padding: 20px;
             border: 1px solid #ddd;
             border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-    </style> -->
+    </style>
 </head>
 <body>
     <div class="container d-flex justify-content-center">
@@ -22,20 +21,33 @@
             <h2 class="text-center mb-6">Sign Up</h2>
             <form>
                 <div class="form-group">
-                  <label for="role">Select Role</label>
-                  <select class="form-control" id="role">
-                      <option value="admin">Admin</option>
-                      <option value="influencer">Influencer</option>
-                      <option value="sponsor">Sponsor</option>
-                  </select>
+                    <label for="role">Select Role</label>
+                    <select class="form-control" id="role" required>
+                        <option value="select role">admin</option>
+                        <option value="sponsor">Sponsor</option>
+                        <option value="influencer">Influencer</option>
+                        
+                    </select>
+                </div>
+                <div class="form-group" id="industry-group" style="display: none;">
+                    <label for="industry">Industry</label>
+                    <input type="text" class="form-control" id="industry" placeholder="Your Industry">
+                </div>
+                <div class="form-group" id="social-platform-group" style="display: none;">
+                    <label for="social-platform">Social Platform</label>
+                    <input type="text" class="form-control" id="social-platform" placeholder="Your Social Platform">
+                </div>
+                <div class="form-group" id="followers-group" style="display: none;">
+                    <label for="followers">Followers</label>
+                    <input type="text" class="form-control" id="followers" placeholder="Your Followers">
                 </div>
                 <div class="form-group">
                     <label for="name">Name</label>
-                    <input type="text" class="form-control" id="name" placeholder="Enter your name">
+                    <input type="text" class="form-control" id="name" placeholder="Enter your name" required>
                 </div>
                 <div class="form-group">
                     <label for="email">Email address</label>
-                    <input type="email" class="form-control" id="email" placeholder="Enter email">
+                    <input type="email" class="form-control" id="email" placeholder="Enter email" required>
                 </div>
                 <div class="form-group">
                     <label for="password">Password</label>
@@ -45,11 +57,8 @@
                     <label for="confirm-password">Confirm Password</label>
                     <input type="password" class="form-control" id="confirm-password" placeholder="Confirm Password">
                 </div>
-                <div class="form-group">
-                  <label for="confirm-password">Confirm Password</label>
-                  <input type="password" class="form-control" id="confirm-password" placeholder="Confirm Password">
-              </div>
                 <button type="submit" class="btn btn-primary btn-block">Sign Up</button>
+                Already Registered?<a  class="sign-link" href="/login"  >login</a>
             </form>
         </div>
     </div>
@@ -57,69 +66,29 @@
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#role').change(function() {
+                var role = $(this).val();
+                if (role === 'admin') {
+                    $('#industry-group').hide();
+                    $('#social-platform-group').hide();
+                    $('#followership-group').hide();
+                } else if (role === 'influencer') {
+                    $('#industry-group').hide();
+                    $('#social-platform-group').show();
+                    $('#followership-group').show();
+                } else if (role === 'sponsor') {
+                    $('#industry-group').show();
+                    $('#social-platform-group').hide();
+                    $('#followership-group').hide();
+                }
+            });
+        });
+    </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+ -->
 
 
 
@@ -177,6 +146,6 @@
     </div>
   </div>
 </body>
-</html>
+</html> -->
 
- -->
+
