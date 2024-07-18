@@ -1,14 +1,10 @@
-
-
-
-
-from flask import Flask,render_template,request
+from flask import Flask,render_template,request,redirect,url_for
 from db import db
 from models import User
 
 app = Flask(__name__)
 
-app.config["SQLALCHEMY_DATABASE_URI"]="sqlite:///iescp.db"
+app.config["SQLALCHEMY_DATABASE_URI"]="sqlite:///iesc.db"
 db.init_app(app)
 
 
@@ -22,16 +18,28 @@ def index():
 #     return render_template("login.html")
 
 #list (we are getting an http GET request at this endpoint)
-@app.route("/users")
+@app.route("/users" ,  methods=['GET','POST'])
 def list_user():
-    if request.method == 'GET':
+    if request.method == "GET":
         users =User.query.all()
         return render_template("user_list.html", users=users)
-    elif request.method == 'POST':
-        #validate and get request data 
-        #create an entryh to the users table 
+    elif request.method == "POST":
+        # validate and get request data 
+        username = request.form.get("username") #none of not key names 'username'
+        email = request.form.get("email")
+        password= request.form.get("password")
+        print("password",password)
+        print(f"username:{username} , password:{password}")
+        role = "admsdcsin"
+        # #create an entryh to the users table
+        new_user = User(username=username, email=email, password=password, role=role)
+        db.session.add(new_user)
+        db.session.commit()
+        return redirect(url_for('list_user'))
+        
+
         # send appropriate response
-        pass
+        
 
 
 #create-- we will send HTTP request with the formto create data anew entity
