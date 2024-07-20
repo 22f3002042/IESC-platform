@@ -8,7 +8,7 @@ from db import db
 class User(db.Model):
     __tablename__ = 'users'
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, autoincrement=True,primary_key=True)
     username = db.Column(db.String(100), unique=True, nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(200), nullable=False)
@@ -21,6 +21,7 @@ class User(db.Model):
     budget = db.Column(db.Float, nullable=True)
 
     # Influencer-specific fields
+    category = db.Column(db.String(100), nullable=True)
     niche = db.Column(db.String(100), nullable=True)
     reach = db.Column(db.Integer, nullable=True)
 
