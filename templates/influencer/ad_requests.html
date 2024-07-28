@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Ad Requests</h2>
+    <div class="list-group">
+        {% for ad_request in ad_requests %}
+            <div class="list-group-item">
+                <h5 class="mb-1">{{ ad_request.campaign.title }}</h5>
+                <p class="mb-1">{{ ad_request.submission }}</p>
+                <small>Status: {{ ad_request.status }}</small>
+                <div class="mt-2">
+                    {% if ad_request.status == 'pending' %}
+                        <form action="{{ url_for('accept_ad_request', ad_request_id=ad_request.id) }}" method="POST" style="display: inline;">
+                            <button type="submit" class="btn btn-success">Accept</button>
+                        </form>
+                        <form action="{{ url_for('reject_ad_request', ad_request_id=ad_request.id) }}" method="POST" style="display: inline;">
+                            <button type="submit" class="btn btn-danger">Reject</button>
+                        </form>
+                        <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#negotiateModal{{ ad_request.id }}">Negotiate</button>
+
+                        <!-- Negotiate Modal -->
+                        <div class="modal fade" id="negotiateModal{{ ad_request.id }}" tabindex="-1" role="dialog" aria-labelledby="negotiateModalLabel{{ ad_request.id }}" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="negotiateModalLabel{{ ad_request.id }}">Negotiate Ad Request</h5>
+                                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <form action="{{ url_for('negotiate_ad_request', ad_request_id=ad_request.id) }}" method="POST">
+                                        <div class="modal-body">
+                                            <div class="form-group">
+                                                <label for="new_payment_amount{{ ad_request.id }}">New Payment Amount</label>
+                                                <input type="number" class="form-control" id="new_payment_amount{{ ad_request.id }}" name="new_payment_amount" required>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            <button type="submit" class="btn btn-primary">Submit</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

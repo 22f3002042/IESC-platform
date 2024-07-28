@@ -1,6 +1,7 @@
 from flask import Flask,render_template,request, redirect, url_for, session, flash
 from db import db
-from models import User, Campaign
+from datetime import datetime
+from models import User, Campaign,AdRequest
 
 app = Flask(__name__)
 
@@ -19,22 +20,8 @@ def base():
     return render_template("base.html")
 
 
-# @app.route('/login', methods=['GET', 'POST'])
-# def admin_login():
-#     if request.method == 'GET':
-#         return render_template("/users/login.html")
-#     elif request.method == 'POST':
-#         if request.form['email'] != 'admin@gmail.com' or \
-#                 request.form['password'] != 'admin123':
-#             flash('You were enter wrong details','warning')    
-#             error = 'Invalid credentials'
-#         else:
-#             flash('You were successfully logged in','success')
-#             return redirect(url_for('admin_dash'))
-#     return render_template('users/login.html')
 
-# def check_password(user_password, password):
-#     return user_password == password
+
 
 
 #new login framwork
@@ -127,7 +114,7 @@ def logout():
     flash(f'{username} - you have been logged out', 'danger')
     return redirect(url_for('homepage'))
 
-# Admin dashboard route
+# Admin  route
 @app.route('/admin_dash')
 def admin_dash():
     if 'user_role' in session and session['user_role'] == 'admin':
@@ -138,7 +125,7 @@ def admin_dash():
         flash('Please log in first!', 'danger')
         return redirect(url_for('homepage'))
 
-# Sponsor dashboard route
+# Sponsor  route
 @app.route('/sponsor_dash')
 def sponsor_dash():
     if 'user_role' in session and session['user_role'] == 'sponsor':
@@ -149,7 +136,137 @@ def sponsor_dash():
         flash('Please log in first!', 'danger')
         return redirect(url_for('homepage'))
 
-# Influencer dashboard route
+@app.route("/sponsor_profile")
+def sponsor_profile():
+    sponsor = User.query.get(session['user_id'])
+
+    session['username'] = sponsor.username
+    session['email'] = sponsor.email
+    session['company_name'] = sponsor.company_name
+    session['industry'] = sponsor.industry
+    session['budget'] = sponsor.budget
+
+    return render_template('/sponsor/sponsor_profile.html', sponsor=sponsor)
+
+@app.route('/edit_profile', methods=['POST'])
+def edit_profile():
+    sponsor = User.query.get(session['user_id'])
+    
+    sponsor.username = request.form['username']
+    sponsor.email = request.form['email']
+    sponsor.company_name = request.form['company_name']
+    sponsor.industry = request.form['industry']
+    sponsor.budget = request.form['budget']
+    
+    db.session.commit()
+
+    session['username'] = sponsor.username
+    session['email'] = sponsor.email
+    session['company_name'] = sponsor.company_name
+    session['industry'] = sponsor.industry
+    session['budget'] = sponsor.budget
+
+    flash('Profile updated successfully!', 'success')
+    return redirect(url_for('sponsor_profile'))
+
+@app.route("/sponsor_campaigns")
+def sponsor_campaigns():
+    return render_template("campaigns.html")
+
+
+@app.route("/sponsor_stats")
+def sponsor_stats():
+    return render_template("sponsor/sponsor_stats.html")
+
+@app.route("/search_infl")
+def search_influencer():
+    return "this is the searching for influencers"
+
+
+
+
+### campaigns routes
+@app.route('/create_campaign', methods=['GET', 'POST'])
+def create_campaign():
+    if 'user_id' not in session or session['user_role'] != 'sponsor':
+        flash('You need to be logged in as a sponsor to create a campaign.', 'danger')
+        return redirect(url_for('login'))
+
+    if request.method == 'POST':
+        title = request.form['title']
+        description = request.form['description']
+        niche = request.form['niche']
+        start_date = request.form['start_date']
+        end_date = request.form['end_date']
+        budget = request.form['budget']
+        visibility = request.form['visibility']
+
+        # Convert string dates to Python date objects
+        start_date = datetime.strptime(start_date, '%Y-%m-%d').date()
+        end_date = datetime.strptime(end_date, '%Y-%m-%d').date()
+
+        new_campaign = Campaign(
+            title=title,
+            description=description,
+            niche=niche,
+            start_date=start_date,
+            end_date=end_date,
+            budget=budget,
+            visibility=visibility,
+            sponsor_id=session['user_id']
+        )
+
+        db.session.add(new_campaign)
+        db.session.commit()
+
+        flash('Campaign created successfully!', 'success')
+        return redirect(url_for('sponsor_profile'))
+
+    return render_template('/campaigns/create_campaign.html')
+
+@app.route('/campaign/<campaign_id>/submit_ad_request', methods=['GET','POST'])
+def submit_ad_request(campaign_id):
+    if 'user_id' not in session or session['user_role'] != 'influencer':
+        flash('You need to be logged in as an influencer to submit an ad request.', 'danger')
+        return redirect(url_for('login'))
+
+    if request.method == 'POST':
+        submission = request.form['submission']
+        new_ad_request = AdRequest(
+            campaign_id=campaign_id,
+            influencer_id=session['user_id'],
+            status='pending'
+        )
+
+        db.session.add(new_ad_request)
+        db.session.commit()
+
+        flash('Ad request submitted successfully!', 'success')
+        return redirect(url_for('view_campaign', campaign_id=campaign_id))
+
+    campaign = Campaign.query.get_or_404(campaign_id)
+    return render_template('submit_ad_request.html', campaign=campaign)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# #####################                               Influencer  route          ###########
 @app.route('/influencer_dash')
 def influencer_dash():
     if 'user_role' in session and session['user_role'] == 'influencer':
@@ -160,6 +277,101 @@ def influencer_dash():
         flash('Please log in first!', 'danger')
         return redirect(url_for('homepage'))
 
+@app.route('/influencer_profile')
+def influencer_profile():
+    if 'user_id' not in session or session['user_role'] != 'influencer':
+        flash('You need to be logged in as an influencer to view your profile.', 'danger')
+        return redirect(url_for('login'))
+
+    influencer = User.query.get(session['user_id'])
+
+    return render_template('influencer/influencer_profile.html', influencer=influencer)
+
+@app.route('/edit_influencer_profile', methods=['GET', 'POST'])
+def edit_influencer_profile():
+    if 'user_id' not in session or session['user_role'] != 'influencer':
+        flash('You need to be logged in as an influencer to edit your profile.', 'danger')
+        return redirect(url_for('login'))
+
+    influencer = User.query.get(session['user_id'])
+
+    if request.method == 'POST':
+        influencer.username = request.form['username']
+        influencer.email = request.form['email']
+        influencer.category = request.form['category']
+        influencer.niche = request.form['niche']
+        influencer.reach = request.form['reach']
+
+        db.session.commit()
+
+        # session['username'] = influencer.username
+        # session['email'] = influencer.email
+
+        flash('Profile updated successfully!', 'success')
+        return redirect(url_for('influencer_profile'))
+
+    return render_template('edit_influencer_profile.html', influencer=influencer)
+
+@app.route('/public_campaigns', methods=['GET', 'POST'])
+def public_campaigns():
+    if 'user_id' not in session or session['user_role'] != 'influencer':
+        flash('You need to be logged in as an influencer to view public campaigns.', 'danger')
+        return redirect(url_for('login'))
+
+    campaigns = Campaign.query.filter_by(visibility='public').all()
+
+    return render_template('influencer/public_campaigns.html', campaigns=campaigns)
+
+@app.route('/ad_requests')
+def ad_requests():
+    if 'user_id' not in session or session['user_role'] != 'influencer':
+        flash('You need to be logged in as an influencer to view ad requests.', 'danger')
+        return redirect(url_for('login'))
+
+    ad_requests = AdRequest.query.filter_by(influencer_id=session['user_id']).all()
+
+    return render_template('influencer/ad_requests.html', ad_requests=ad_requests)
+
+@app.route('/ad_request/<int:ad_request_id>/accept', methods=['POST'])
+def accept_ad_request(ad_request_id):
+    if 'user_id' not in session or session['user_role'] != 'influencer':
+        flash('You need to be logged in as an influencer to accept an ad request.', 'danger')
+        return redirect(url_for('login'))
+
+    ad_request = AdRequest.query.get(ad_request_id)
+    ad_request.status = 'approved'
+    db.session.commit()
+
+    flash('Ad request accepted successfully!', 'success')
+    return redirect(url_for('ad_requests'))
+
+@app.route('/ad_request/<int:ad_request_id>/reject', methods=['POST'])
+def reject_ad_request(ad_request_id):
+    if 'user_id' not in session or session['user_role'] != 'influencer':
+        flash('You need to be logged in as an influencer to reject an ad request.', 'danger')
+        return redirect(url_for('login'))
+
+    ad_request = AdRequest.query.get(ad_request_id)
+    ad_request.status = 'rejected'
+    db.session.commit()
+
+    flash('Ad request rejected successfully!', 'success')
+    return redirect(url_for('ad_requests'))
+
+@app.route('/ad_request/<int:ad_request_id>/negotiate', methods=['POST'])
+def negotiate_ad_request(ad_request_id):
+    if 'user_id' not in session or session['user_role'] != 'influencer':
+        flash('You need to be logged in as an influencer to negotiate an ad request.', 'danger')
+        return redirect(url_for('login'))
+
+    new_payment_amount = request.form['new_payment_amount']
+    ad_request = AdRequest.query.get(ad_request_id)
+    ad_request.payment_amount = new_payment_amount
+    ad_request.status = 'negotiation'
+    db.session.commit()
+
+    flash('Ad request negotiation submitted successfully!', 'success')
+    return redirect(url_for('ad_requests'))
 
 
 
@@ -168,6 +380,15 @@ def influencer_dash():
 
 
 
+
+
+
+
+
+
+# @app.route('/camapaigns')
+# def campaigns():
+#     return render_template('campaigns.html')
 
 
 
@@ -228,3 +449,5 @@ if __name__ == '__main__':
         app.run(debug=True,port=8000)
     
 
+
+    

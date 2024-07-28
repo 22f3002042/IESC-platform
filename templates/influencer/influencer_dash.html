@@ -2,7 +2,28 @@
 {% block title %} Influencer Dashboard {% endblock %} 
 {% block content%}
 
-<h1>this is the influencer Dashboard</h1>
+<h3>this is the influencer Dashboard</h3>
+<a href="influencer_profile">influencer_profile</a><br>
 
+<div class="container mt-5">
+    <h2 class="mb-4">Public Campaigns</h2>
+    <div class="list-group">
+        {% for campaign in campaigns %}
+            <a href="{{ url_for('view_campaign', campaign_id=campaign.id) }}" class="list-group-item list-group-item-action">
+                <h5 class="mb-1">{{ campaign.title }}</h5>
+                <p class="mb-1">{{ campaign.description }}</p>
+                <small>Category: {{ campaign.niche }}</small>
+            </a>
+        {% endfor %}
+    </div>
+</div>
 
+<div class="container mt-5">
+    <h2 class="mb-4">{{ campaigns.title }}</h2>
+    <p><strong>Description:</strong> {{ campaigns.description }}</p>
+    <p><strong>Category:</strong> {{ campaigns.niche }}</p>
+    <p><strong>Budget:</strong> {{ campaigns.budget }} Rs.</p>
+    <p><strong>Status:</strong> {{ campaigns.status }}</p>
+    <p><strong>Visibility:</strong> {{ campaigns.visibility }}</p>
+</div>
 {% endblock %}

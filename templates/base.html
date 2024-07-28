@@ -9,7 +9,7 @@
 </head>
 
 <body>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <nav class="navbar navbar-expand-lg bg-body-secondary">
     <div class="container-fluid">
       <a class="navbar-brand">
         {% if 'user_id' in session %}
@@ -23,26 +23,43 @@
       </button>
 
       <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ml-auto">
+        <div class="container-fluid">
+          <ul class="navbar-nav ml-auto ms-5  ">
 
             {% if 'user_id' in session %}
-                <li class="nav-item">
+                {% if session['user_role'] == 'sponsor' %}
+                    <li class="nav-item ml-auto me-auto"><a class="nav-link" href="{{ url_for('sponsor_profile') }}">Profile</a></li>
+                    <li class="nav-item ml-auto me-auto"><a class="nav-link" href="{{ url_for('sponsor_dash') }}">Dashboard</a></li>
+                    <li class="nav-item ml-auto me-auto"><a class="nav-link" href="{{ url_for('create_campaign') }}">cretaeCampaigns</a></li>
+                    <li class="nav-item ml-auto me-auto"><a class="nav-link" href="{{ url_for('search_influencer') }}">influencer</a></li>
+                    <li class="nav-item ml-auto me-auto" ><a class="nav-link" href="{{ url_for('sponsor_stats') }}">Stats</a></li>
+                {% elif session['user_role'] == 'admin' %}
+                    <li class="nav-item ml-5"><a class="nav-link" href="{{ url_for('admin_dash') }}">Dashboard</a></li>
+                    <li class="nav-item ml-5"><a class="nav-link" href="{{ url_for('manage_users') }}">Manage Users</a></li>
+                    <li class="nav-item ml-5"><a class="nav-link" href="{{ url_for('settings') }}">Settings</a></li>
+                {% elif session['user_role'] == 'influencer' %}
+                    <li class="nav-item ml-5"><a class="nav-link" href="{{ url_for('influencer_profile') }}">Profile</a></li>
+                    <li class="nav-item ml-5"><a class="nav-link" href="{{ url_for('influencer_dash') }}">Dashboard</a></li>
+                    <li class="nav-item ml-5"><a class="nav-link" href="{{ url_for('ad_requests') }}">Ad requests</a></li>
+                {% endif %}
+                <li class="nav-item ml-auto">
                     <form class="form-inline my-2 my-lg-0" action="{{ url_for('homepage') }}" method="GET">
                         <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="query">
                         <button class="btn btn-outline-success my-3 my-sm-0" type="submit">Search</button>
                     </form>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item ">
                    <a type="button " class="btn btn-outline-danger ms-3 " aria-current="page" href="{{ url_for('logout') }}" >logout</a>
                 </li>
             {% else %}
-                <li class="nav-item">
+                <li class="nav-item ms-auto">
                     <span class="navbar-text">
                         Welcome to Influencer Enagagement and Sponsor Coordination Platform.
                     </span>
                 </li>
             {% endif %}
-        </ul>
+          </ul>
+        </div>
       </div>     
     </div>
   </nav>
@@ -72,19 +89,3 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

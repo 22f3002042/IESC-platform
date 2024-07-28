@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Influencer Profile</h2>
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">{{ influencer.username }}</h4>
+            <h6 class="card-subtitle mb-2 text-muted">{{ influencer.email }}</h6>
+            <p class="card-text">
+                <strong>Category:</strong> {{ influencer.category }}<br>
+                <strong>Niche:</strong> {{ influencer.niche }}<br>
+                <strong>Reach:</strong> {{ influencer.reach }} followers<br>
+            </p>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editProfileModal">
+                Edit Profile
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Profile Modal -->
+<div class="modal fade" id="editProfileModal" tabindex="-1" role="dialog" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editProfileModalLabel">Edit Profile</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="{{ url_for('edit_influencer_profile') }}" method="POST">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" class="form-control" id="username" name="username" value="{{ influencer.username }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" value="{{ influencer.email }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="category">Category</label>
+                        <input type="text" class="form-control" id="category" name="category" value="{{ influencer.category }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="niche">Niche</label>
+                        <input type="text" class="form-control" id="niche" name="niche" value="{{ influencer.niche }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="reach">Reach</label>
+                        <input type="number" class="form-control" id="reach" name="reach" value="{{ influencer.reach }}">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
