@@ -16,14 +16,16 @@
             </button>
         </div>
         <div class="card-body">
-            {% if influencer.flagged %}
-                <div class="alert alert-warning" role="alert">
-                    Your account is flagged. Request ADMIN to unflag your Profile below.
+            {% if influencer.unflag_request  %} 
+                <div class="alert alert-success" role="alert">
+                    Your unflag-request is sent to ADMIN. 
+                    Wait for the approval.
                 </div>
-        
-                {% if influencer.unflag_request is in unflag_request %}
-                    <h3>Your request has already been sent. Please wait for admin approval.</h3>
-                {% else %}
+            {% else %}
+                {% if influencer.flagged %}
+                    <div class="alert alert-warning" role="alert">
+                        Your account is flagged. Request ADMIN to unflag your Profile below.
+                    </div>
                     <form method="POST" action="{{ url_for('request_unflag') }}">
                         <div class="form-group">
                             <label for="unflag_request">Reason for Unflag Request</label>

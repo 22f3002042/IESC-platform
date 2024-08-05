@@ -3,41 +3,44 @@
 {% block title %}Manage Users{% endblock %}
 
 {% block content %}
-<!-- unflag usr request -->
-
-<div class="container mt-5 col-8">
-    <h2 class="mb-4">Unflag Requests</h2>
-    <div class="card">
-    {% if requests %}
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Username</th>
-                    <th>Unflag Request</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for request in requests %}
-                    <tr>
-                        <td>{{ request.username }}</td>
-                        <td>{{ request.unflag_request }}</td>
-                        <td>
-                            <form method="POST" action="{{ url_for('approve_unflag', user_id=request.id) }}">
-                                <button type="submit" class="btn btn-success">Approve</button>
-                            </form>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p class="text-md-center">No unflag requests at the moment.</p>
-    {% endif %}
+<!-- Unflag User Requests -->
+<div class="card d-flex mt-4 col-12">
+    <div class="card-body ">
+        <h2 class="mb-5">Unflag Requests</h2>
+        <div class="container d-flex justify-content-center ">
+            {% if unflag_requests %}
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Role</th>
+                            <th>Unflag Request</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for request in unflag_requests %}
+                            <tr>
+                                <td>{{ request.username }}</td>
+                                <td>{{ request.role }}</td>
+                                <td>{{ request.unflag_request }}</td>
+                                <td>
+                                    <form method="POST" action="{{ url_for('approve_unflag', user_id=request.id) }}">
+                                        <button type="submit" class="btn btn-success">Approve</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p class="text-md-center">No unflag requests initiated.</p>
+            {% endif %}
+        </div>
     </div>
 </div>
 
-
+<!-- Manage Users -->
 <div class="container mt-5">
     <h2 class="mb-4">Manage Users</h2>
     
@@ -100,34 +103,34 @@
         <h3>Flagged Users</h3>
         <div class="row">
             {% for user in flagged_users %}
-            <div class="col-md-4 mb-3">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ user.username }}</h5>
-                        <p class="card-text">
-                            <strong>Email:</strong> {{ user.email }}<br>
-                            <strong>Role:</strong> {{ user.role.capitalize() }}<br>
-                            {% if user.role == 'sponsor' %}
-                            <strong>Company Name:</strong> {{ user.company_name }}<br>
-                            <strong>Industry:</strong> {{ user.industry }}<br>
-                            <strong>Budget:</strong> {{ user.budget }}<br>
-                            {% elif user.role == 'influencer' %}
-                            <strong>Category:</strong> {{ user.category }}<br>
-                            <strong>Niche:</strong> {{ user.niche }}<br>
-                            <strong>Reach:</strong> {{ user.reach }}
-                            {% endif %}
-                        </p>
-                        <div class="d-flex justify-content-between">
-                            <form method="POST" action="{{ url_for('unflag_user', user_id=user.id) }}" style="display:inline;">
-                                <button type="submit" class="btn btn-secondary">Unflag User</button>
-                            </form>
-                            <form method="POST" action="{{ url_for('delete_user', user_id=user.id) }}">
-                                <button type="submit" class="btn btn-danger">Delete User</button>
-                            </form>
+                <div class="col-md-4 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ user.username }}</h5>
+                            <p class="card-text">
+                                <strong>Email:</strong> {{ user.email }}<br>
+                                <strong>Role:</strong> {{ user.role.capitalize() }}<br>
+                                {% if user.role == 'sponsor' %}
+                                <strong>Company Name:</strong> {{ user.company_name }}<br>
+                                <strong>Industry:</strong> {{ user.industry }}<br>
+                                <strong>Budget:</strong> {{ user.budget }}<br>
+                                {% elif user.role == 'influencer' %}
+                                <strong>Category:</strong> {{ user.category }}<br>
+                                <strong>Niche:</strong> {{ user.niche }}<br>
+                                <strong>Reach:</strong> {{ user.reach }}
+                                {% endif %}
+                            </p>
+                            <div class="d-flex justify-content-between">
+                                <form method="POST" action="{{ url_for('unflag_user', user_id=user.id) }}" style="display:inline;">
+                                    <button type="submit" class="btn btn-secondary">Unflag User</button>
+                                </form>
+                                <form method="POST" action="{{ url_for('delete_user', user_id=user.id) }}">
+                                    <button type="submit" class="btn btn-danger">Delete User</button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
             {% endfor %}
         </div>
     </div>

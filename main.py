@@ -184,17 +184,22 @@ def manage_users():
     influencers = User.query.filter_by(role='influencer').all()
     sponsors = User.query.filter_by(role='sponsor').all()
     flagged_users = User.query.filter_by(flagged=True).all()
+    unflag_requests = User.query.filter(User.unflag_request.isnot(None)).all()
 
-    return render_template('/admin/manage_users.html', influencers=influencers, sponsors=sponsors, flagged_users=flagged_users)
+    return render_template('/admin/manage_users.html', influencers=influencers, sponsors=sponsors, flagged_users=flagged_users, unflag_requests=unflag_requests)
+
+
+
+
 
 @app.route('/admin/users/flag/<user_id>', methods=['POST'])
 def flag_user(user_id):
     user = User.query.get(user_id)
     if user:
         user.flagged = True
-        user.flagged_notification = True
+        # user.flagged_notification = True
         db.session.commit()
-        flash(f'{user.username} has been flagged.', 'success')
+        flash(f'{user.username} has been flagged.', 'warning')
     else:
         flash('User not found.', 'danger')
 
@@ -203,8 +208,10 @@ def flag_user(user_id):
 @app.route('/admin/users/unflag/<user_id>', methods=['POST'])
 def unflag_user(user_id):
     user = User.query.get(user_id)
+    unflag_requests = User.query.filter(User.unflag_request.isnot(None)).all()
     if user.flagged:
         user.flagged = False
+        user.unflag_request = None
         db.session.commit()
         flash(f"User {user.username} has been unflagged.", "success")
     else:
@@ -226,8 +233,6 @@ def delete_user(user_id):
 
 @app.route('/request_unflag', methods=['GET', 'POST'])
 def request_unflag():
-    if 'user_id' not in session or session['user_role'] == 'admin':
-        return redirect(url_for('homepage'))
 
     user = User.query.get(session['user_id'])
 
@@ -246,7 +251,10 @@ def admin_unflag_requests():
         return redirect(url_for('homepage'))
 
     requests = User.query.filter(User.unflag_request.isnot(None)).all()
-    return render_template('/admin_profile.html', requests=requests)
+    influencers = User.query.filter_by(role='influencer').all()
+    sponsors = User.query.filter_by(role='sponsor').all()
+    flagged_users = User.query.filter_by(flagged=True).all()
+    return render_template('admin/manage_users.html', requests=requests, influencers=influencers, sponsors=sponsors, flagged_users=flagged_users)
 
 @app.route('/admin/approve_unflag/<int:user_id>', methods=['POST'])
 def approve_unflag(user_id):
@@ -256,16 +264,18 @@ def approve_unflag(user_id):
     user = User.query.get_or_404(user_id)
     user.flagged = False
     user.unflag_request = None
-    
     db.session.commit()
 
-    flash('User has been unflagged.', 'success')
+    flash(f'User {user.username} has been unflagged successfully!', 'success')
     return redirect(url_for('admin_unflag_requests'))
+
+########################################## campaigns  ####################
 
 @app.route('/admin/campaigns', methods=['GET'])
 def manage_campaigns():
     campaigns = Campaign.query.all()
-    return render_template('/admin/admin_campaigns.html', campaigns=campaigns)
+    flagged_campaigns = Campaign.query.filter_by(is_flagged=True).all()
+    return render_template('/admin/admin_campaigns.html', campaigns=campaigns, flagged_campaigns=flagged_campaigns)
 
 
 @app.route('/admin/campaigns/flag/<campaign_id>', methods=['POST'])
@@ -280,14 +290,14 @@ def flag_campaign(campaign_id):
     flash(f"Campaign '{campaign.title}' has been flagged.", "warning")
     return redirect(url_for('manage_campaigns'))
 
-@app.route('/admin/flagged_campaigns', methods=['GET'])
-def manage_flagged_campaigns():
-    if 'user_id' not in session or session['user_role'] != 'admin':
-        flash('You need to be logged in as an admin to access this page.', 'danger')
-        return redirect(url_for('login'))
-
-    flagged_campaigns = Campaign.query.filter_by(is_flagged=True).all()
-    return render_template('admin_flagged_campaigns.html', flagged_campaigns=flagged_campaigns)
+# @app.route('/admin/flagged_campaigns', methods=['GET'])
+# def manage_flagged_campaigns():
+#     if 'user_id' not in session or session['user_role'] != 'admin':
+#         flash('You need to be logged in as an admin to access this page.', 'danger')
+#         return redirect(url_for('login'))
+    
+#     flagged_campaigns = Campaign.query.filter_by(is_flagged=True).all()
+#     return render_template('manage_campaigns', flagged_campaigns=flagged_campaigns)
 
 @app.route('/admin/flagged_campaigns/unflag/<int:campaign_id>', methods=['POST'])
 def unflag_campaign(campaign_id):
@@ -299,7 +309,7 @@ def unflag_campaign(campaign_id):
     campaign.is_flagged = False
     db.session.commit()
     flash(f"Campaign '{campaign.title}' has been unflagged.", "success")
-    return redirect(url_for('manage_flagged_campaigns'))
+    return redirect(url_for('manage_campaigns'))
 
 
 @app.route('/admin/flagged_campaigns/delete/<int:campaign_id>', methods=['POST'])
@@ -312,7 +322,7 @@ def delete_flagged_campaign(campaign_id):
     db.session.delete(campaign)
     db.session.commit()
     flash(f"Campaign '{campaign.title}' has been deleted.", "danger")
-    return redirect(url_for('manage_flagged_campaigns'))
+    return redirect(url_for('manage_campaigns'))
 ########################################################################################################################
 
 
@@ -340,6 +350,7 @@ def sponsor_profile():
     session['company_name'] = sponsor.company_name
     session['industry'] = sponsor.industry
     session['budget'] = sponsor.budget
+    session['unflag_request'] = sponsor.unflag_request
 
     return render_template('/sponsor/sponsor_profile.html', sponsor=sponsor)
 

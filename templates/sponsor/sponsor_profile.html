@@ -17,14 +17,15 @@
         </div>
 
         <div class="card-body">
-        {%if sponsor.unflag_request %}
-            <div class="alert alert-warning" role="alert">
-                You request is to unflag is submitted. Please! wait for admin for approve.
-            </div>
-        {% elif %}
+        {% if sponsor.unflag_request  %} 
+        <div class="alert alert-success" role="alert">
+            Your unflag-request is sent to ADMIN. 
+            Wait for the approval.
+        </div>
+        {% else %}
             {% if sponsor.flagged %}
             <div class="alert alert-warning" role="alert">
-                Your account is flagged. You can request to be unflagged below.
+                Your account is flagged. You can request ADMIN to unflagged below.
             </div>
 
         <!-- Request Unflag Form -->
