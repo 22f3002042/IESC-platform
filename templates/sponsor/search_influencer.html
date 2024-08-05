@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}All Influencers{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">All Influencers</h2>
+
+    <!-- Influencers List Section -->
+    <div class="row">
+        {% for influencer in influencers %}
+        <div class="col-md-4 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ influencer.username }}</h5>
+                    <p class="card-text">Niche: {{ influencer.niche }}</p>
+                    <p class="card-text">Reach: {{ influencer.reach }}</p>
+                    <a href="{{ url_for('influencer_profile', influencer_id=influencer.id) }}" class="btn btn-info">View Profile</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

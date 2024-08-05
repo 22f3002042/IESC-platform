@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="container mt-5">
-    <h2 class="mb-4">Sponsor Profile</h2>
-    <div class="card flex-column">
+<div class="container mt-5 col-6">
+    <h2 class="mb-4 ">Sponsor Profile</h2>
+    <div class="card ">
         <div class="card-body">
             <p class="card-text">
                 <strong>Username:</strong> {{ session.username }}<br>
@@ -14,6 +14,29 @@
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editProfileModal">
                 Edit Profile
             </button>
+        </div>
+
+        <div class="card-body">
+        {%if sponsor.unflag_request %}
+            <div class="alert alert-warning" role="alert">
+                You request is to unflag is submitted. Please! wait for admin for approve.
+            </div>
+        {% elif %}
+            {% if sponsor.flagged %}
+            <div class="alert alert-warning" role="alert">
+                Your account is flagged. You can request to be unflagged below.
+            </div>
+
+        <!-- Request Unflag Form -->
+            <form method="POST" action="{{ url_for('request_unflag') }}">
+                <div class="form-group">
+                    <label for="unflag_request">Reason for Unflag Request</label>
+                    <textarea class="form-control" id="unflag_request" name="unflag_request" rows="3" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Request Unflag</button>
+            </form>
+            {% endif %}
+        {% endif %}
         </div>
     </div>
 </div>

@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Ad Requests{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Manage Ad Requests for {{ campaign.name }}</h2>
+    
+    <!-- Button to open the modal to create an ad request (for private campaigns only) -->
+    {% if campaign.visibility == 'private' %}
+    <button type="button" class="btn btn-primary mb-4" data-toggle="modal" data-target="#createAdRequestModal">
+        Create Ad Request
+    </button>
+    {% endif %}
+
+    <!-- Ad Requests List -->
+    <div class="mb-5">
+        <h3>Ad Requests</h3>
+        <div class="row">
+            {% for ad_request in ad_requests %}
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Ad Request #{{ ad_request.id }}</h5>
+                        <p class="card-text">Requirements: {{ ad_request.requirements }}</p>
+                        <p class="card-text">Payment: ${{ ad_request.payment_amount }}</p>
+                        <p class="card-text">Status: {{ ad_request.status }}</p>
+                        <!-- Additional actions based on status -->
+                        {% if ad_request.status == 'pending' %}
+                        <form method="POST" action="{{ url_for('approve_ad_request', ad_request_id=ad_request.id) }}" style="display:inline;">
+                            <button type="submit" class="btn btn-success">Approve</button>
+                        </form>
+                        <form method="POST" action="{{ url_for('reject_ad_request', ad_request_id=ad_request.id) }}" style="display:inline;">
+                            <button type="submit" class="btn btn-danger">Reject</button>
+                        </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Create Ad Request Modal -->
+    <div class="modal fade" id="createAdRequestModal" tabindex="-1" role="dialog" aria-labelledby="createAdRequestModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form method="POST" action="{{ url_for('manage_ad_requests', campaign_id=campaign.id) }}">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="createAdRequestModalLabel">Create Ad Request</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="influencer_id">Select Influencer</label>
+                            <select class="form-control" id="influencer_id" name="influencer_id" required>
+                                {% for influencer in influencers %}
+                                <option value="{{ influencer.id }}">{{ influencer.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="requirements">Requirements</label>
+                            <textarea class="form-control" id="requirements" name="requirements" rows="3" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="payment_amount">Payment Amount</label>
+                            <input type="number" class="form-control" id="payment_amount" name="payment_amount" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Create Ad Request</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

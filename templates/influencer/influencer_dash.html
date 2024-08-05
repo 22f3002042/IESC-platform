@@ -1,29 +1,131 @@
-{% extends "base.html" %} 
-{% block title %} Influencer Dashboard {% endblock %} 
-{% block content%}
 
-<h3>this is the influencer Dashboard</h3>
-<a href="influencer_profile">influencer_profile</a><br>
 
+{% extends "base.html" %}
+{% block content %}
 <div class="container mt-5">
-    <h2 class="mb-4">Public Campaigns</h2>
-    <div class="list-group">
-        {% for campaign in campaigns %}
-            <a href="{{ url_for('view_campaign', campaign_id=campaign.id) }}" class="list-group-item list-group-item-action">
-                <h5 class="mb-1">{{ campaign.title }}</h5>
-                <p class="mb-1">{{ campaign.description }}</p>
-                <small>Category: {{ campaign.niche }}</small>
-            </a>
-        {% endfor %}
+    <h2 class="mb-4">Influencer Dashboard</h2>
+
+    <!-- Ad Requests -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h4>Ad Requests</h4>
+        </div>
+        <div class="card-body">
+            {% if ad_requests %}
+                <ul class="list-group">
+                    {% for ad_request in ad_requests %}
+                        <li class="list-group-item">
+                            <strong>Campaign:</strong> {{ ad_request.campaign.title }}<br>
+                            <strong>Status:</strong> {{ ad_request.status }}<br>
+                            <a href="{{ url_for('view_ad_request', ad_request_id=ad_request.id) }}" class="btn btn-info">View Details</a>
+                            {% if ad_request.status == 'pending' %}
+                                <a href="{{ url_for('accept_ad_request', ad_request_id=ad_request.id) }}" class="btn btn-success">Accept</a>
+                                <a href="{{ url_for('reject_ad_request', ad_request_id=ad_request.id) }}" class="btn btn-danger">Reject</a>
+                                <a href="{{ url_for('negotiate_ad_request', ad_request_id=ad_request.id) }}" class="btn btn-warning">Negotiate</a>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No ad requests at the moment.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    
+    
+    <!-- Public Campaigns -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h4>Public Campaigns</h4>
+        </div>
+        <div class="card-body">
+            {% if public_campaigns %}
+                <ul class="list-group">
+                    {% for campaign in public_campaigns %}
+                        <li class="list-group-item">
+                            <strong>Title:</strong> {{ campaign.title }}<br>
+                            <strong>Description:</strong> {{ campaign.description }}<br>
+                            <strong>Niche:</strong> {{ campaign.niche }}<br>
+                            <strong>Budget:</strong> {{ campaign.budget }}<br><br>
+                            <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#viewCampaignModal" data-campaign-id="{{ campaign.id }}">View Details</button>
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#submitAdRequestModal" data-campaign-id="{{ campaign.id }}">Submit Ad Request</button>
+                        </li>
+                    
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No public campaigns available at the moment.</p>
+            {% endif %}
+        </div>
+    </div>
+    <!-- pop up form of viewing campaign  -->
+    <div class="modal fade" id="viewCampaignModal" tabindex="-1" aria-labelledby="viewCampaignModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="viewCampaignModalLabel">Campaign Details</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            {% for campaign in public_campaigns %}
+                <div class="modal-body">
+                    <h4>{{ campaign.title }}</h4>
+                    <p><strong>Description:</strong> {{ campaign.description }}</p>
+                    <p><strong>Niche:</strong> {{ campaign.niche }}</p>
+                    <p><strong>Start Date:</strong> {{ campaign.start_date.strftime('%Y-%m-%d') }}</p>
+                    <p><strong>End Date:</strong> {{ campaign.end_date.strftime('%Y-%m-%d') }}</p>
+                    <p><strong>Budget:</strong> {{ campaign.budget }} Rs.</p>
+                    <p><strong>Status:</strong> {{ campaign.status }}</p>
+                    <p><strong>Visibility:</strong> {{ campaign.visibility }}</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <a href="{{ url_for('influencer_dash', campaign_id=campaign.id) }}" class="btn btn-primary">Submit Ad Request</a>
+                </div>
+            {% endfor %}
+          </div>
+        </div>
+    </div>
+    <!-- pop up form of submitting ad reuquest   -->
+    <div class="modal fade" id="submitAdRequestModal" tabindex="-1" aria-labelledby="submitAdRequestModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="submitAdRequestModalLabel">Submit Ad Request</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ url_for('influencer_dash', campaign_id=campaign_id) }}" method="POST">
+              <div class="modal-body">
+                <div class="form-group">
+                  <label for="submission">Submission Details</label>
+                  <textarea class="form-control" id="submission" name="submission" rows="4" required></textarea>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-primary">Submit</button>
+              </div>
+            </form>
+          </div>
+        </div>
+    </div>
+
+
+
+    <!-- Statistics -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h4>Statistics</h4>
+        </div>
+        <div class="card-body">
+            <p>Performance metrics related to your campaigns will be displayed here.</p>
+        </div>
     </div>
 </div>
 
-<div class="container mt-5">
-    <h2 class="mb-4">{{ campaigns.title }}</h2>
-    <p><strong>Description:</strong> {{ campaigns.description }}</p>
-    <p><strong>Category:</strong> {{ campaigns.niche }}</p>
-    <p><strong>Budget:</strong> {{ campaigns.budget }} Rs.</p>
-    <p><strong>Status:</strong> {{ campaigns.status }}</p>
-    <p><strong>Visibility:</strong> {{ campaigns.visibility }}</p>
-</div>
 {% endblock %}
+
+
+
+
+

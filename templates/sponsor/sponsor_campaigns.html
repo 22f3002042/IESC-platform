@@ -1,15 +1,126 @@
-{% extends base.html %}
-{% block title %} campaigns {% endblock%}
+{% extends 'base.html' %}
 
-{% block content %} 
+{% block title %}Sponsor Campaigns{% endblock %}
 
-<h1>this si campaigns</h1>
-{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Manage Campaigns</h2>
     
+    <!-- Button to open the modal to create a campaign -->
+    <button type="button" class="btn btn-primary mb-4" data-toggle="modal" data-target="#createCampaignModal">
+        Create Campaign
+    </button>
 
- <!-- {% extends "base.html" %} 
- {% block title %} Sponsor Dashboard {% endblock %} 
- {% block content%}
- <h3>THIS IS the sponsor Dashboard</h3>
- <a href="campaigns.html"> clcik here </a>
- {% endblock %} -->
+    <!-- Public Campaigns Section -->
+    <div class="mb-5">
+        <h3>Public Campaigns</h3>
+        <div class="row">
+            {% for campaign in public_campaigns %}
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ campaign.title }}</h5>
+                        <p class="card-text">{{ campaign.description }}</p>
+                        <p class="card-text">Progress: {{ campaign.progress() }}%</p>
+                        <a href="{{ url_for('view_campaign', campaign_id=campaign.id) }}" class="btn btn-info">View </a>
+                        <a href="{{ url_for('edit_campaign', campaign_id=campaign.id) }}" class="btn btn-secondary">Edit </a>
+                        <form method="POST" action="{{ url_for('delete_campaign', campaign_id=campaign.id) }}" style="display:inline;">
+                            <button type="submit" class="btn btn-danger">Delete </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Private Campaigns Section -->
+    <div class="mb-5">
+        <h3>Private Campaigns</h3>
+        <div class="row">
+            {% for campaign in private_campaigns %}
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ campaign.title }}</h5>
+                        <p class="card-text">{{ campaign.description }}</p>
+                        <p class="card-text">Progress: {{ campaign.progress() }}%</p>
+                        <a href="{{ url_for('view_campaign', campaign_id=campaign.id) }}" class="btn btn-info">View </a>
+                        <a href="{{ url_for('edit_campaign', campaign_id=campaign.id) }}" class="btn btn-secondary">Edit </a>
+                        <form method="POST" action="{{ url_for('delete_campaign', campaign_id=campaign.id) }}" style="display:inline;">
+                            <button type="submit" class="btn btn-danger">Delete </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Create Campaign Modal -->
+    <div class="modal fade" id="createCampaignModal" tabindex="-1" role="dialog" aria-labelledby="createCampaignModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form method="POST" action="{{ url_for('sponsor_campaigns') }}">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="createCampaignModalLabel">Create Campaign</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="title">Campaign Name</label>
+                            <input type="text" class="form-control" id="title" name="title" required>
+                            
+                        </div>
+                        <div class="form-group">
+                            <label for="description">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="name">Niche</label>
+                            <input type="text" class="form-control" id="name" name="niche" >
+                        </div>
+                        <div class="form-group">
+                            <label for="start_date">Start Date</label>
+                            <input type="date" class="form-control" id="start_date" name="start_date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="end_date">End Date</label>
+                            <input type="date" class="form-control" id="end_date" name="end_date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="budget">Budget</label>
+                            <input type="number" class="form-control" id="budget" name="budget" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="visibility">Visibility</label>
+                            <select class="form-control" id="visibility" name="visibility" required>
+                                <option value="public">Public</option>
+                                <option value="private">Private</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="status">Status</label>
+                            <input type="text" class="form-control" id="status" name="status" >
+                        </div>
+                        <div class="form-group">
+                            <label for="goals">Goals</label>
+                            <textarea class="form-control" id="goals" name="goals" rows="3"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Create Campaign</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+
+

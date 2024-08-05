@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Users{% endblock %}
+
+{% block content %}
+<!-- unflag usr request -->
+
+<div class="container mt-5 col-8">
+    <h2 class="mb-4">Unflag Requests</h2>
+    <div class="card">
+    {% if requests %}
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Unflag Request</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for request in requests %}
+                    <tr>
+                        <td>{{ request.username }}</td>
+                        <td>{{ request.unflag_request }}</td>
+                        <td>
+                            <form method="POST" action="{{ url_for('approve_unflag', user_id=request.id) }}">
+                                <button type="submit" class="btn btn-success">Approve</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="text-md-center">No unflag requests at the moment.</p>
+    {% endif %}
+    </div>
+</div>
+
+
+<div class="container mt-5">
+    <h2 class="mb-4">Manage Users</h2>
+    
+    <!-- Influencers Section -->
+    <div class="mb-5">
+        <h3>Influencers</h3>
+        <div class="row">
+            {% for influencer in influencers %}
+                {% if not influencer.flagged %}
+                    <div class="col-md-4 mb-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ influencer.username }}</h5>
+                                <p class="card-text">
+                                    <strong>Email:</strong> {{ influencer.email }}<br>
+                                    <strong>Category:</strong> {{ influencer.category }}<br>
+                                    <strong>Niche:</strong> {{ influencer.niche }}<br>
+                                    <strong>Reach:</strong> {{ influencer.reach }}
+                                </p>
+                                <form method="POST" action="{{ url_for('flag_user', user_id=influencer.id) }}">
+                                    <button type="submit" class="btn btn-warning">Flag User</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Sponsors Section -->
+    <div class="mb-5">
+        <h3>Sponsors</h3>
+        <div class="row">
+            {% for sponsor in sponsors %}
+                {% if not sponsor.flagged %}
+                    <div class="col-md-4 mb-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ sponsor.username }}</h5>
+                                <p class="card-text">
+                                    <strong>Email:</strong> {{ sponsor.email }}<br>
+                                    <strong>Company Name:</strong> {{ sponsor.company_name }}<br>
+                                    <strong>Industry:</strong> {{ sponsor.industry }}<br>
+                                    <strong>Budget:</strong> {{ sponsor.budget }}
+                                </p>
+                                <form method="POST" action="{{ url_for('flag_user', user_id=sponsor.id) }}">
+                                    <button type="submit" class="btn btn-warning">Flag User</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Flagged Users Section -->
+    <div class="mb-5">
+        <h3>Flagged Users</h3>
+        <div class="row">
+            {% for user in flagged_users %}
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ user.username }}</h5>
+                        <p class="card-text">
+                            <strong>Email:</strong> {{ user.email }}<br>
+                            <strong>Role:</strong> {{ user.role.capitalize() }}<br>
+                            {% if user.role == 'sponsor' %}
+                            <strong>Company Name:</strong> {{ user.company_name }}<br>
+                            <strong>Industry:</strong> {{ user.industry }}<br>
+                            <strong>Budget:</strong> {{ user.budget }}<br>
+                            {% elif user.role == 'influencer' %}
+                            <strong>Category:</strong> {{ user.category }}<br>
+                            <strong>Niche:</strong> {{ user.niche }}<br>
+                            <strong>Reach:</strong> {{ user.reach }}
+                            {% endif %}
+                        </p>
+                        <div class="d-flex justify-content-between">
+                            <form method="POST" action="{{ url_for('unflag_user', user_id=user.id) }}" style="display:inline;">
+                                <button type="submit" class="btn btn-secondary">Unflag User</button>
+                            </form>
+                            <form method="POST" action="{{ url_for('delete_user', user_id=user.id) }}">
+                                <button type="submit" class="btn btn-danger">Delete User</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

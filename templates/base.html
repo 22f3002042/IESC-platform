@@ -30,13 +30,14 @@
                 {% if session['user_role'] == 'sponsor' %}
                     <li class="nav-item ml-auto me-auto"><a class="nav-link" href="{{ url_for('sponsor_profile') }}">Profile</a></li>
                     <li class="nav-item ml-auto me-auto"><a class="nav-link" href="{{ url_for('sponsor_dash') }}">Dashboard</a></li>
-                    <li class="nav-item ml-auto me-auto"><a class="nav-link" href="{{ url_for('create_campaign') }}">cretaeCampaigns</a></li>
-                    <li class="nav-item ml-auto me-auto"><a class="nav-link" href="{{ url_for('search_influencer') }}">influencer</a></li>
-                    <li class="nav-item ml-auto me-auto" ><a class="nav-link" href="{{ url_for('sponsor_stats') }}">Stats</a></li>
+                    <li class="nav-item ml-auto me-auto"><a class="nav-link" href="{{ url_for('sponsor_campaigns') }}">Campaigns</a></li>
+                    <li class="nav-item ml-auto me-auto"><a class="nav-link" href="{{ url_for('sponsor_influencer') }}">influencer</a></li>
+                    <li class="nav-item ml-auto me-auto" ><a class="nav-link" href="{{ url_for('sponsor_dash') }}">Ads Requests</a></li>
                 {% elif session['user_role'] == 'admin' %}
                     <li class="nav-item ml-5"><a class="nav-link" href="{{ url_for('admin_dash') }}">Dashboard</a></li>
-                    <li class="nav-item ml-5"><a class="nav-link" href="{{ url_for('manage_users') }}">Manage Users</a></li>
-                    <li class="nav-item ml-5"><a class="nav-link" href="{{ url_for('settings') }}">Settings</a></li>
+                    <li class="nav-item ml-5"><a class="nav-link" href="{{ url_for('admin_profile') }}">Profile</a></li>
+                    <li class="nav-item ml-5"><a class="nav-link" href="{{ url_for('manage_users') }}">Users</a></li>
+                    <li class="nav-item ml-5"><a class="nav-link" href="{{ url_for('manage_campaigns') }}">Campaigns</a></li>
                 {% elif session['user_role'] == 'influencer' %}
                     <li class="nav-item ml-5"><a class="nav-link" href="{{ url_for('influencer_profile') }}">Profile</a></li>
                     <li class="nav-item ml-5"><a class="nav-link" href="{{ url_for('influencer_dash') }}">Dashboard</a></li>

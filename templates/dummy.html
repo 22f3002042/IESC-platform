@@ -1,102 +1,155 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sponsor Profile</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-    <style>
-        .profile-container {
-            max-width: 600px;
-            margin: 50px auto;
-            padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            background-color: #f9f9f9;
-        }
-        .profile-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .campaigns-container {
-            margin-top: 20px;
-        }
-        .campaign-actions button {
-            margin-right: 10px;
-        }
-        #campaignForm {
-            display: none; /* Initially hide the form */
-            margin-top: 20px;
-            border: 1px solid #ddd;
-            padding: 20px;
-            border-radius: 10px;
-            background-color: #e9e9e9;
-        }
-    </style>
-</head>
-<body>
-    <div class="container profile-container">
-        <!-- <div class="profile-header">
-            <h2>Sponsor Profile</h2>
-            <p><strong>Company/Individual Name:</strong> Acme Corp</p>
-            <p><strong>Industry:</strong> Advertising</p>
-            <p><strong>Budget:</strong> $10,000</p>
-        </div> -->
 
-        <div class="campaigns-container">
-            <h4>Campaigns</h4>
-            <button class="btn btn-primary mb-3" onclick="showForm()">Create New Campaign</button>
-            <ul class="list-group">
-                <li class="list-group-item">
-                    <h5>Campaign 1</h5>
-                    <p>Details about the campaign...</p>
-                </li>
-                <li class="list-group-item">
-                    <h5>Campaign 2</h5>
-                    <p>Details about the campaign...</p>
-                </li>
-                <!-- Add more campaigns as needed -->
-            </ul>
-        </div>
 
-        <!-- Hidden form for creating a new campaign -->
-        <div id="campaignForm">
-            <h4>Create New Campaign</h4>
-            <form id="newCampaignForm">
-                <div class="form-group">
-                    <label for="campaignName">Campaign Name</label>
-                    <input type="text" class="form-control" id="campaignName" placeholder="Enter campaign name" required>
-                </div>
-                <div class="form-group">
-                    <label for="campaignDetails">Details</label>
-                    <textarea class="form-control" id="campaignDetails" rows="3" placeholder="Enter campaign details" required></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="campaignBudget">Budget</label>
-                    <input type="number" class="form-control" id="campaignBudget" placeholder="Enter budget" required>
-                </div>
-                <button type="submit" class="btn btn-success">Create Campaign</button>
-            </form>
-        </div>
+
+<div class="container mt-5">
+    <h2 class="mb-4">{{ campaigns.title }}</h2>
+    <p><strong>Description:</strong> {{ campaigns.description }}</p>
+    <p><strong>Category:</strong> {{ campaigns.niche }}</p>
+    <p><strong>Budget:</strong> {{ campaigns.budget }} Rs.</p>
+    <p><strong>Status:</strong> {{ campaigns.status }}</p>
+    <p><strong>Visibility:</strong> {{ campaigns.visibility }}</p>
+</div>
+
+{% extends "base.html" %} 
+{% block title %} Influencer Dashboard {% endblock %} 
+{% block content%}
+
+<h3>this is the influencer Dashboard</h3>
+<a href="influencer_profile">influencer_profile</a><br>
+
+
+<div class="container mt-5">
+    <h2 class="mb-4">Public Campaigns</h2>
+    <div class="list-group">
+        {% for public_campaigns in campaigns %}
+            <a href="{{ url_for('view_campaign', campaign_id=campaign.id) }}" class="list-group-item list-group-item-action">
+                <h5 class="mb-1">{{ public_campaigns.title }}</h5>
+                <p class="mb-1">{{ public_campaigns.description }}</p>
+                <small>Category: {{ public_campaigns.niche }}</small>
+            </a>
+        {% endfor %}
     </div>
+</div>
 
-    <script>
-        function showForm() {
-            document.getElementById("campaignForm").style.display = "block";
-        }
-
-        document.getElementById("newCampaignForm").addEventListener("submit", function(event) {
-            event.preventDefault();
-            alert("Campaign created!");
-            // Add logic for form submission here
-        });
-    </script>
-</body>
-</html>
+{% endblock %}
 
 
 
 
+<li class="list-group-item">
+    <strong>Title:</strong> {{ campaign.title }}<br>
+    <strong>Description:</strong> {{ campaign.description }}<br>
+    <strong>Niche:</strong> {{ campaign.niche }}<br>
+    <strong>Budget:</strong> {{ campaign.budget }}<br><br>
+    <a href="{{ url_for('view_campaign', campaign_id=campaign.id) }}" class="btn btn-info">View Details</a>  
+    <a href="{{ url_for('submit_ad_request', campaign_id=campaign.id) }}" class="btn btn-primary">Submit Ad Request</a>
+</li>
+
+
+
+
+{% extends 'base.html' %}
+
+{% block title %}Sponsor Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Sponsor Dashboard</h2>
+    <a href="{{ url_for('create_campaign') }}" class="btn btn-primary mb-3">Create New Campaign</a>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Niche</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Budget</th>
+                <th>Visibility</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for campaign in campaigns %}
+            <tr>
+                <td>{{ campaign.title }}</td>
+                <td>{{ campaign.description }}</td>
+                <td>{{ campaign.niche }}</td>
+                <td>{{ campaign.start_date }}</td>
+                <td>{{ campaign.end_date }}</td>
+                <td>${{ campaign.budget }}</td>
+                <td>{{ campaign.visibility }}</td>
+                <td>
+                    <a href="{{ url_for('view_campaign', campaign_id=campaign.id) }}" class="btn btn-info btn-sm">View</a>
+                    <a href="{{ url_for('edit_campaign', campaign_id=campaign.id) }}" class="btn btn-warning btn-sm">Edit</a>
+                    <form action="{{ url_for('delete_campaign', campaign_id=campaign.id) }}" method="post" style="display:inline;">
+                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                    </form>
+                    <a href="{{ url_for('manage_ad_requests', campaign_id=campaign.id) }}" class="btn btn-primary btn-sm">Manage Ad Requests</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+
+
+
+
+
+
+
+
+<!-- {% extends 'base.html' %}
+
+{% block title %}Edit Campaign{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Edit Campaign</h2>
+    <form action="{{ url_for('edit_campaign', campaign_id=campaign.id) }}" method="post">
+        <div class="form-group">
+            <label for="title">Title</label>
+            <input type="text" class="form-control" id="title" name="title" value="{{ campaign.title }}" required>
+        </div>
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea class="form-control" id="description" name="description" rows="3" required>{{ campaign.description }}</textarea>
+        </div>
+        <div class="form-group">
+            <label for="niche">Niche</label>
+            <input type="text" class="form-control" id="niche" name="niche" value="{{ campaign.niche }}" required>
+        </div>
+        <div class="form-group">
+            <label for="start_date">Start Date</label>
+            <input type="date" class="form-control" id="start_date" name="start_date" value="{{ campaign.start_date }}" required>
+        </div>
+        <div class="form-group">
+            <label for="end_date">End Date</label>
+            <input type="date" class="form-control" id="end_date" name="end_date" value="{{ campaign.end_date }}" required>
+        </div>
+        <div class="form-group">
+            <label for="budget">Budget</label>
+            <input type="number" step="0.01" class="form-control" id="budget" name="budget" value="{{ campaign.budget }}" required>
+        </div>
+        <div class="form-group">
+            <label for="visibility">Visibility</label>
+            <select class="form-control" id="visibility" name="visibility" required>
+                <option value="public" {% if campaign.visibility == 'public' %}selected{% endif %}>Public</option>
+                <option value="private" {% if campaign.visibility == 'private' %}selected{% endif %}>Private</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="goals">Goals</label>
+            <textarea class="form-control" id="goals" name="goals" rows="3">{{ campaign.goals }}</textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Update Campaign</button>
+        <a href="{{ url_for('sponsor_dashboard') }}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+<!-- Edit Campaign Modal -->
+ -->
 
 
 
@@ -106,21 +159,15 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+ <div class="card mt-3">
+    <div class="container ">
+        <h3 class="card-body">Flagged User's Request</h3>
+        <form method="POST" action="{{ url_for('request_unflag') }}">
+            <div class="form-group">
+                <label for="unflag_request">Reason for Unflag Request</label>
+                <textarea class="form-control" id="unflag_request" name="unflag_request" rows="3" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit Request</button>
+        </form>
+    </div>
+</div>

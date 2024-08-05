@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="container mt-5">
+<div class="container mt-5   col-6 ">
     <h2 class="mb-4">Influencer Profile</h2>
     <div class="card">
         <div class="card-body">
@@ -15,6 +15,26 @@
                 Edit Profile
             </button>
         </div>
+        <div class="card-body">
+            {% if influencer.flagged %}
+                <div class="alert alert-warning" role="alert">
+                    Your account is flagged. Request ADMIN to unflag your Profile below.
+                </div>
+        
+                {% if influencer.unflag_request is in unflag_request %}
+                    <h3>Your request has already been sent. Please wait for admin approval.</h3>
+                {% else %}
+                    <form method="POST" action="{{ url_for('request_unflag') }}">
+                        <div class="form-group">
+                            <label for="unflag_request">Reason for Unflag Request</label>
+                            <textarea class="form-control" id="unflag_request" name="unflag_request" rows="3" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Request Unflag</button>
+                    </form>
+                {% endif %}
+            {% endif %}
+        </div>        
+        
     </div>
 </div>
 

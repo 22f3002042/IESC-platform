@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Campaigns{% endblock %}
+
+{% block content %}
+<div class="container mt-3">
+    <h2 class="mb-4">Manage Campaigns</h2>
+
+    <!-- Campaigns Section -->
+    <div class="mb-5">
+        <h3>All Campaigns</h3>
+        <div class="row">
+            {% for campaign in campaigns %}
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ campaign.title }}</h5>
+                        <p class="card-text">
+                            <strong>Description:</strong> {{ campaign.description }}<br>
+                            <strong>Niche:</strong> {{ campaign.niche }}<br>
+                            <strong>Start Date:</strong> {{ campaign.start_date }}<br>
+                            <strong>End Date:</strong> {{ campaign.end_date }}<br>
+                            <strong>Budget:</strong> {{ campaign.budget }}<br>
+                            <strong>Status:</strong> {{ campaign.status }}<br>
+                            <strong>Visibility:</strong> {{ campaign.visibility }}
+                        </p>
+                        <form method="POST" action="{{ url_for('flag_campaign', campaign_id=campaign.id) }}" style="display:inline;">
+                            <button type="submit" class="btn btn-warning">Flag Campaign</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Flagged Campaigns Section -->
+    <div class="mb-5">
+        <h3>Flagged Campaigns</h3>
+        <div class="row">
+            {% for campaign in is_flagged %}
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ campaign.title }}</h5>
+                        <p class="card-text">
+                            <strong>Description:</strong> {{ campaign.description }}<br>
+                            <strong>Niche:</strong> {{ campaign.niche }}<br>
+                            <strong>Start Date:</strong> {{ campaign.start_date }}<br>
+                            <strong>End Date:</strong> {{ campaign.end_date }}<br>
+                            <strong>Budget:</strong> {{ campaign.budget }}<br>
+                            <strong>Status:</strong> {{ campaign.status }}<br>
+                            <strong>Visibility:</strong> {{ campaign.visibility }}
+                        </p>
+                        <form method="POST" action="{{ url_for('unflag_campaign', campaign_id=campaign.id) }}" style="display:inline;">
+                            <button type="submit" class="btn btn-secondary me-2">Unflag Campaign</button>
+                        </form>
+                        <form method="POST" action="{{ url_for('delete_flagged_campaign', campaign_id=campaign.id) }}" style="display:inline;">
+                            <button type="submit" class="btn btn-danger">Delete Campaign</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

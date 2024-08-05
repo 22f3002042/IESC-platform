@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}View Campaign{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>{{ campaign.title }}</h2>
+    <p><strong>Description:</strong> {{ campaign.description }}</p>
+    <p><strong>Niche:</strong> {{ campaign.niche }}</p>
+    <p><strong>Start Date:</strong> {{ campaign.start_date }}</p>
+    <p><strong>End Date:</strong> {{ campaign.end_date }}</p>
+    <p><strong>Budget:</strong> {{ campaign.budget }} Rs.</p>
+    <p><strong>Visibility:</strong> {{ campaign.visibility }}</p>
+    <p><strong>Status:</strong> {{ campaign.status }}</p>
+    <p><strong>Status:</strong> <span class="
+        {% if campaign.status == 'ongoing' %}text-white bg-primary rounded px-1  align-items-center justify-content-center
+        {% elif campaign.status == 'completed' %}text-white bg-success rounded px-1  align-items-center justify-content-center
+        {% elif campaign.status == 'ended' %}text-white bg-warning rounded px-1 align-items-center justify-content-center{% endif %}">{{ campaign.status }}</span>
+    </p>
+    <p><strong>Goals:</strong> {{ campaign.goals }}</p>
+
+    <!-- {% if session['user_role'] == 'sponsor' and campaign.sponsor_id == session['user_id'] %}
+        <a href="{{ url_for('edit_campaign', campaign_id=campaign.id) }}" class="btn btn-warning">Edit</a>
+        <form action="{{ url_for('delete_campaign', campaign_id=campaign.id) }}" method="post" style="display:inline;">
+            <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
+        <a href="{{ url_for('manage_ad_requests', campaign_id=campaign.id) }}" class="btn btn-primary">Manage Ad Requests</a>
+    {% endif %} -->
+
+    <a href="{{ url_for('sponsor_campaigns') }}" class="btn btn-secondary">Back</a>
+</div>
+{% endblock %}
