@@ -32,7 +32,8 @@
                     <li class="nav-item ml-auto me-auto"><a class="nav-link" href="{{ url_for('sponsor_dash') }}">Dashboard</a></li>
                     <li class="nav-item ml-auto me-auto"><a class="nav-link" href="{{ url_for('sponsor_campaigns') }}">Campaigns</a></li>
                     <li class="nav-item ml-auto me-auto"><a class="nav-link" href="{{ url_for('sponsor_influencer') }}">influencer</a></li>
-                    <li class="nav-item ml-auto me-auto" ><a class="nav-link" href="{{ url_for('sponsor_dash') }}">Ads Requests</a></li>
+                    <li class="nav-item ml-auto me-auto"><a class="nav-link" href="{{ url_for('sponsor_ad_requests',campaign_id=2) }}">Ads Requests</a></li>
+                  
                 {% elif session['user_role'] == 'admin' %}
                     <li class="nav-item ml-5"><a class="nav-link" href="{{ url_for('admin_dash') }}">Dashboard</a></li>
                     <li class="nav-item ml-5"><a class="nav-link" href="{{ url_for('admin_profile') }}">Profile</a></li>

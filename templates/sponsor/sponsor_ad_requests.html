@@ -24,7 +24,7 @@
                             <p class="card-text">Payment Amount: {{ ad_request.payment_amount }}</p>
                             <p class="card-text">Status: {{ ad_request.status }}</p>
                             <p class="card-text">Ads Completed: {{ ad_request.ads_completed }} / {{ ad_request.ads_required }}</p>
-                            <p class="card-text">Progress: {{ ad_request.progress() }}%</p>
+                           
                             <form method="POST" action="{{ url_for('update_ad_request', ad_request_id=ad_request.id) }}" style="display:inline;">
                                 <input type="hidden" name="status" value="approved">
                                 <input type="hidden" name="payment_amount" value="{{ ad_request.payment_amount }}">

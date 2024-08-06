@@ -1,49 +1,8 @@
 
 
 
-<div class="container mt-5">
-    <h2 class="mb-4">{{ campaigns.title }}</h2>
-    <p><strong>Description:</strong> {{ campaigns.description }}</p>
-    <p><strong>Category:</strong> {{ campaigns.niche }}</p>
-    <p><strong>Budget:</strong> {{ campaigns.budget }} Rs.</p>
-    <p><strong>Status:</strong> {{ campaigns.status }}</p>
-    <p><strong>Visibility:</strong> {{ campaigns.visibility }}</p>
-</div>
-
-{% extends "base.html" %} 
-{% block title %} Influencer Dashboard {% endblock %} 
-{% block content%}
-
-<h3>this is the influencer Dashboard</h3>
-<a href="influencer_profile">influencer_profile</a><br>
 
 
-<div class="container mt-5">
-    <h2 class="mb-4">Public Campaigns</h2>
-    <div class="list-group">
-        {% for public_campaigns in campaigns %}
-            <a href="{{ url_for('view_campaign', campaign_id=campaign.id) }}" class="list-group-item list-group-item-action">
-                <h5 class="mb-1">{{ public_campaigns.title }}</h5>
-                <p class="mb-1">{{ public_campaigns.description }}</p>
-                <small>Category: {{ public_campaigns.niche }}</small>
-            </a>
-        {% endfor %}
-    </div>
-</div>
-
-{% endblock %}
-
-
-
-
-<li class="list-group-item">
-    <strong>Title:</strong> {{ campaign.title }}<br>
-    <strong>Description:</strong> {{ campaign.description }}<br>
-    <strong>Niche:</strong> {{ campaign.niche }}<br>
-    <strong>Budget:</strong> {{ campaign.budget }}<br><br>
-    <a href="{{ url_for('view_campaign', campaign_id=campaign.id) }}" class="btn btn-info">View Details</a>  
-    <a href="{{ url_for('submit_ad_request', campaign_id=campaign.id) }}" class="btn btn-primary">Submit Ad Request</a>
-</li>
 
 
 
@@ -97,59 +56,6 @@
 
 
 
-
-
-
-
-<!-- {% extends 'base.html' %}
-
-{% block title %}Edit Campaign{% endblock %}
-
-{% block content %}
-<div class="container mt-5">
-    <h2>Edit Campaign</h2>
-    <form action="{{ url_for('edit_campaign', campaign_id=campaign.id) }}" method="post">
-        <div class="form-group">
-            <label for="title">Title</label>
-            <input type="text" class="form-control" id="title" name="title" value="{{ campaign.title }}" required>
-        </div>
-        <div class="form-group">
-            <label for="description">Description</label>
-            <textarea class="form-control" id="description" name="description" rows="3" required>{{ campaign.description }}</textarea>
-        </div>
-        <div class="form-group">
-            <label for="niche">Niche</label>
-            <input type="text" class="form-control" id="niche" name="niche" value="{{ campaign.niche }}" required>
-        </div>
-        <div class="form-group">
-            <label for="start_date">Start Date</label>
-            <input type="date" class="form-control" id="start_date" name="start_date" value="{{ campaign.start_date }}" required>
-        </div>
-        <div class="form-group">
-            <label for="end_date">End Date</label>
-            <input type="date" class="form-control" id="end_date" name="end_date" value="{{ campaign.end_date }}" required>
-        </div>
-        <div class="form-group">
-            <label for="budget">Budget</label>
-            <input type="number" step="0.01" class="form-control" id="budget" name="budget" value="{{ campaign.budget }}" required>
-        </div>
-        <div class="form-group">
-            <label for="visibility">Visibility</label>
-            <select class="form-control" id="visibility" name="visibility" required>
-                <option value="public" {% if campaign.visibility == 'public' %}selected{% endif %}>Public</option>
-                <option value="private" {% if campaign.visibility == 'private' %}selected{% endif %}>Private</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="goals">Goals</label>
-            <textarea class="form-control" id="goals" name="goals" rows="3">{{ campaign.goals }}</textarea>
-        </div>
-        <button type="submit" class="btn btn-primary">Update Campaign</button>
-        <a href="{{ url_for('sponsor_dashboard') }}" class="btn btn-secondary">Cancel</a>
-    </form>
-</div>
-<!-- Edit Campaign Modal -->
- -->
 
 
 
@@ -208,5 +114,190 @@
     {% else %}
         <p>No unflag requests at the moment.</p>
     {% endif %}
+</div>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% extends 'base.html' %}
+
+{% block title %}Manage Ad Requests{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Manage Ad Requests for {{ campaign.name }}</h2>
+    
+    <!-- Button to open the modal to create an ad request (for private campaigns only) -->
+    {% if campaign.visibility == 'private' %}
+    <button type="button" class="btn btn-primary mb-4" data-toggle="modal" data-target="#createAdRequestModal">
+        Create Ad Request
+    </button>
+    {% endif %}
+
+    <!-- Ad Requests List -->
+    <div class="mb-5">
+        <h3>Ad Requests</h3>
+        <div class="row">
+            {% for ad_request in ad_requests %}
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Ad Request #{{ ad_request.id }}</h5>
+                        <p class="card-text">Requirements: {{ ad_request.requirements }}</p>
+                        <p class="card-text">Payment: ${{ ad_request.payment_amount }}</p>
+                        <p class="card-text">Status: {{ ad_request.status }}</p>
+                        <!-- Additional actions based on status -->
+                        {% if ad_request.status == 'pending' %}
+                        <form method="POST" action="{{ url_for('approve_ad_request', ad_request_id=ad_request.id) }}" style="display:inline;">
+                            <button type="submit" class="btn btn-success">Approve</button>
+                        </form>
+                        <form method="POST" action="{{ url_for('reject_ad_request', ad_request_id=ad_request.id) }}" style="display:inline;">
+                            <button type="submit" class="btn btn-danger">Reject</button>
+                        </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Create Ad Request Modal -->
+    <div class="modal fade" id="createAdRequestModal" tabindex="-1" role="dialog" aria-labelledby="createAdRequestModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form method="POST" action="{{ url_for('manage_ad_requests', campaign_id=campaign.id) }}">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="createAdRequestModalLabel">Create Ad Request</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="influencer_id">Select Influencer</label>
+                            <select class="form-control" id="influencer_id" name="influencer_id" required>
+                                {% for influencer in influencers %}
+                                <option value="{{ influencer.id }}">{{ influencer.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="requirements">Requirements</label>
+                            <textarea class="form-control" id="requirements" name="requirements" rows="3" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="payment_amount">Payment Amount</label>
+                            <input type="number" class="form-control" id="payment_amount" name="payment_amount" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Create Ad Request</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% extends 'base.html' %}
+
+{% block title %}Ad Requests{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Ad Requests</h2>
+    <div class="row">
+        {% if ad_requests %}
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Influencer</th>
+                        <th>Campaign</th>
+                        <th>Requested Payment</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for request in ad_requests %}
+                        <tr>
+                            <td>{{ request.influencer.username }}</td>
+                            <td>{{ request.campaign.title }}</td>
+                            <td>{{ request.payment_amount }}</td>
+                            <td>{{ request.status }}</td>
+                            <td>
+                                {% if request.status == 'pending' %}
+                                    <form method="POST" action="{{ url_for('approve_ad_request', request_id=request.id) }}" style="display:inline;">
+                                        <button type="submit" class="btn btn-success">Approve</button>
+                                    </form>
+                                    <form method="POST" action="{{ url_for('reject_ad_request', request_id=request.id) }}" style="display:inline;">
+                                        <button type="submit" class="btn btn-danger">Reject</button>
+                                    </form>
+                                    <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#negotiateModal-{{ request.id }}">Negotiate</button>
+
+                                    <!-- Negotiate Modal -->
+                                    <div class="modal fade" id="negotiateModal-{{ request.id }}" tabindex="-1" role="dialog" aria-labelledby="negotiateModalLabel-{{ request.id }}" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <form method="POST" action="{{ url_for('negotiate_ad_request', request_id=request.id) }}">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="negotiateModalLabel-{{ request.id }}">Negotiate Payment</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="form-group">
+                                                            <label for="new_payment">New Payment Amount</label>
+                                                            <input type="number" class="form-control" id="new_payment" name="new_payment" required>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p class="text-center">No ad requests available.</p>
+        {% endif %}
+    </div>
 </div>
 {% endblock %}
