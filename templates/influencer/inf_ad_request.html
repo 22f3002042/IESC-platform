@@ -6,55 +6,47 @@
 <div class="container mt-5">
     <h2 class="mb-4">Manage Ad Requests</h2>
 
-    <!-- Create Private Ad Request Modal Trigger -->
-    <button type="button" class="btn btn-primary mb-4" data-toggle="modal" data-target="#createAdRequestModal">
-        Create Private Ad Request
-    </button>
-
-    <!-- Private Sent Requests -->
+    <!-- Public Campaigns: Sent Requests -->
     <div class="mb-5">
-        <h3>Sent Requests</h3>
+        <button type="button" class="btn btn-primary mb-4" data-toggle="modal" data-target="#createPublicAdRequestModal">
+            Create Ad Request
+        </button>
+        <h3>Sent Requests </h3>
         <div class="row">
-            {% for ad_request in private_ad_requests %}
+            {% for ad_request in sent_ad_requests %}
                 <div class="col-md-4 mb-3">
                     <div class="card">
                         <div class="card-body">
-                            <h5 class="card-title">{{ ad_request.campaign.title }} - {{ ad_request.campaign.visibility.capitalize() }}</h5>
-                            <p class="card-text">Influencer: {{ ad_request.influencer.username }}</p>
-                            
+                            <h5 class="card-title">{{ ad_request.campaign.title }}</h5>
+                            <p class="card-text">Details: {{ ad_request.details }}</p>
+                            <p class="card-text">Payment Amount: {{ ad_request.payment_amount }}</p>
+                            <p class="card-text"> influencer : {{ ad_request.influencer_id}}  #need to be delete </p>
                             <p class="card-text">Status: {{ ad_request.status }}</p>
                             <p class="card-text">Ads Completed: {{ ad_request.ads_completed }} / {{ ad_request.ads_required }}</p>
                             
                             <!-- View button -->
-                            <a href="{{ url_for('sponsor_view_ad_request', ad_request_id=ad_request.id) }}" class="btn btn-info" >View</a>
+                            <a href="{{ url_for('inf_view_ad_request', ad_request_id=ad_request.id) }}" class="btn btn-info">View</a>
 
                             <!-- Update button -->
-                            <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#updateAdRequestModal-{{ ad_request.id }}">
+                            <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#updatePublicAdRequestModal-{{ ad_request.id }}">
                                 Update
                             </button>
 
                             <!-- Delete button -->
-                            <form method="POST" action="{{ url_for('delete_ad_request', ad_request_id=ad_request.id) }}" style="display:inline;">
+                            <form method="POST" action="{{ url_for('influencer_delete_ad_request', ad_request_id=ad_request.id) }}" style="display:inline;">
                                 <button type="submit" class="btn btn-danger">Delete</button>
                             </form>
-
-                            <!-- Complete button -->
-                            <!-- <form method="POST" action="{{ url_for('update_ad_request', ad_request_id=ad_request.id) }}" style="display:inline;">
-                                <input type="hidden" name="status" value="completed">
-                                <button type="submit" class="btn btn-success">Complete</button>
-                            </form> -->
                         </div>
                     </div>
                 </div>
 
-                <!-- Update Ad Request Modal -->
-                <div class="modal fade" id="updateAdRequestModal-{{ ad_request.id }}" tabindex="-1" role="dialog" aria-labelledby="updateAdRequestModalLabel-{{ ad_request.id }}" aria-hidden="true">
+                <!-- Update Public Ad Request Modal -->
+                <div class="modal fade" id="updatePublicAdRequestModal-{{ ad_request.id }}" tabindex="-1" role="dialog" aria-labelledby="updatePublicAdRequestModalLabel-{{ ad_request.id }}" aria-hidden="true">
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
-                            <form method="POST" action="{{ url_for('update_ad_request', ad_request_id=ad_request.id) }}">
-                                
+                            <form method="POST" action="{{ url_for('influencer_update_ad_request', ad_request_id=ad_request.id) }}">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="updateAdRequestModalLabel-{{ ad_request.id }}">Update Ad Request</h5>
+                                    <h5 class="modal-title" id="updatePublicAdRequestModalLabel-{{ ad_request.id }}">Update Ad Request</h5>
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
@@ -62,7 +54,7 @@
                                 <div class="modal-body">
                                     <div class="form-group">
                                         <label for="details">Details</label>
-                                        <textarea class="form-control" id="details" name="details" rows="3" value="{{ ad_request.details }}" required>{{ ad_request.details }}</textarea>
+                                        <textarea class="form-control" id="details" name="details" rows="3" required>{{ ad_request.details }}</textarea>
                                     </div>
                                     <div class="form-group">
                                         <label for="payment_amount">Payment Amount</label>
@@ -73,7 +65,7 @@
                                         <input type="number" class="form-control" id="ads_required" name="ads_required" value="{{ ad_request.ads_required }}" required>
                                     </div>
                                     <div class="form-group">
-                                        <label for="ads_required">Ads Completed</label>
+                                        <label for="ads_completed">Ads Completed</label>
                                         <input type="number" class="form-control" id="ads_completed" name="ads_completed" value="{{ ad_request.ads_completed }}" required>
                                     </div>
                                     <div class="form-group">
@@ -98,34 +90,38 @@
         </div>
     </div>
 
-    <!-- Public Received Requests -->
+    <!-- Private Campaigns: Received Requests -->
     <div class="mb-5">
-        <h3>Received Requests</h3>
+        <h3>Received Requests </h3>
         <div class="row">
-            {% for ad_request in public_ad_requests %}
+            {% for ad_request in received_ad_requests %}
                 <div class="col-md-4 mb-3">
                     <div class="card">
                         <div class="card-body">
-                            <h5 class="card-title">{{ ad_request.campaign.title }} - {{ ad_request.campaign.visibility.capitalize() }}</h5>
-                            <strong class="card-text">Influencer: {{ ad_request.influencer.username }}</strong>
+                            <h5 class="card-title">{{ ad_request.campaign.title }}</h5>
                             <p class="card-text">Details: {{ ad_request.details }}</p>
                             <p class="card-text">Payment Amount: {{ ad_request.payment_amount }}</p>
+                            <p class="card-text"> influencer : {{ ad_request.influencer_id}}   #need to be delete  </p>   
                             <p class="card-text">Status: {{ ad_request.status }}</p>
                             <p class="card-text">Ads Completed: {{ ad_request.ads_completed }} / {{ ad_request.ads_required }}</p>
-                            <!-- Add buttons for managing ad request status -->
-                            <form method="POST" action="{{ url_for('update_ad_request', ad_request_id=ad_request.id) }}" style="display:inline;">
+                            
+                            <!-- Approve button -->
+                            <form method="POST" action="{{ url_for('influencer_update_ad_request', ad_request_id=ad_request.id) }}" style="display:inline;">
                                 <input type="hidden" name="status" value="approved">
                                 <button type="submit" class="btn btn-success">Approve</button>
                             </form>
-                            <form method="POST" action="{{ url_for('update_ad_request', ad_request_id=ad_request.id) }}" style="display:inline;">
+
+                            <!-- Reject button -->
+                            <form method="POST" action="{{ url_for('influencer_update_ad_request', ad_request_id=ad_request.id) }}" style="display:inline;">
                                 <input type="hidden" name="status" value="rejected">
                                 <button type="submit" class="btn btn-danger">Reject</button>
                             </form>
-                            <form method="POST" action="{{ url_for('update_ad_request', ad_request_id=ad_request.id) }}" style="display:inline;">
+
+                            <!-- Mark as Completed button -->
+                            <form method="POST" action="{{ url_for('influencer_update_ad_request', ad_request_id=ad_request.id) }}" style="display:inline;">
                                 <input type="hidden" name="status" value="completed">
                                 <button type="submit" class="btn btn-info">Mark Completed</button>
                             </form>
-                            <!-- Add buttons for managing ad request status -->
                         </div>
                     </div>
                 </div>
@@ -134,13 +130,13 @@
     </div>
 </div>
 
-<!-- Create Private Ad Request Modal -->
-<div class="modal fade" id="createAdRequestModal" tabindex="-1" role="dialog" aria-labelledby="createAdRequestModalLabel" aria-hidden="true">
+<!-- Create Public Ad Request Modal -->
+<div class="modal fade" id="createPublicAdRequestModal" tabindex="-1" role="dialog" aria-labelledby="createPublicAdRequestModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <form method="POST" action="{{ url_for('create_private_ad_request') }}">
+            <form method="POST" action="{{ url_for('create_ad_request') }}">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="createAdRequestModalLabel">Create Private Ad Request</h5>
+                    <h5 class="modal-title" id="createPublicAdRequestModalLabel">Create Public Ad Request</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -149,16 +145,8 @@
                     <div class="form-group">
                         <label for="campaign_id">Select Campaign</label>
                         <select class="form-control" id="campaign_id" name="campaign_id" required>
-                            {% for campaign in private_campaigns %}
+                            {% for campaign in public_campaigns %}
                                 <option value="{{ campaign.id }}">{{ campaign.title }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="influencer_id">Select Influencer</label>
-                        <select class="form-control" id="influencer_id" name="influencer_id" required>
-                            {% for influencer in influencers %}
-                                <option value="{{ influencer.id }}">{{ influencer.username }}</option>
                             {% endfor %}
                         </select>
                     </div>

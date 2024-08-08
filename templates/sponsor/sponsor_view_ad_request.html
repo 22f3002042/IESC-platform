@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}View Ad Request{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Ad Request Details</h2>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">{{ ad_request.campaign.title }} - {{ ad_request.campaign.visibility.capitalize() }}</h5>
+            <p class="card-text">Receiving Influencer: {{ ad_request.influencer.username.capitalize() }}</p>
+            <p class="card-text">Details: {{ ad_request.details }}</p>
+            <p class="card-text">Payment Amount: {{ ad_request.payment_amount }}</p>
+            <p class="card-text">Status: <strong>{{ ad_request.status.capitalize() }}</strong></p>
+            <p class="card-text">Last updated : {{ ad_request.updated_at }}</p>
+            <p class="card-text">Ads Completed: {{ ad_request.ads_completed }} / {{ ad_request.ads_required }}</p>
+            <a href="{{ url_for('sponsor_ad_requests') }}" class="btn btn-secondary">Back</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

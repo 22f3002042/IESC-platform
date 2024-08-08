@@ -28,21 +28,37 @@
 
             {% if 'user_id' in session %}
                 {% if session['user_role'] == 'sponsor' %}
-                    <li class="nav-item ml-auto me-auto"><a class="nav-link" href="{{ url_for('sponsor_profile') }}">Profile</a></li>
-                    <li class="nav-item ml-auto me-auto"><a class="nav-link" href="{{ url_for('sponsor_dash') }}">Dashboard</a></li>
-                    <li class="nav-item ml-auto me-auto"><a class="nav-link" href="{{ url_for('sponsor_campaigns') }}">Campaigns</a></li>
-                    <li class="nav-item ml-auto me-auto"><a class="nav-link" href="{{ url_for('sponsor_influencer') }}">influencer</a></li>
-                    <li class="nav-item ml-auto me-auto"><a class="nav-link" href="{{ url_for('sponsor_ad_requests',campaign_id=2) }}">Ads Requests</a></li>
-                  
+                  {% if current_user.flagged %}
+                      <li class="nav-item ml-auto me-auto"><a class="nav-link" href="{{ url_for('sponsor_profile') }}">Profile</a></li>
+                  {% else %}
+                      <li class="nav-item ml-auto me-auto"><a class="nav-link" href="{{ url_for('sponsor_profile') }}">Profile</a></li>
+                      <li class="nav-item ml-auto me-auto"><a class="nav-link" href="{{ url_for('sponsor_dash') }}">Dashboard</a></li>
+                      <li class="nav-item ml-auto me-auto"><a class="nav-link" href="{{ url_for('sponsor_campaigns') }}">Campaigns</a></li>
+                      <li class="nav-item ml-auto me-auto"><a class="nav-link" href="{{ url_for('sponsor_influencer') }}">Influencer</a></li>
+                      <li class="nav-item ml-auto me-auto"><a class="nav-link" href="{{ url_for('sponsor_ad_requests') }}">Ads Requests</a></li>
+                      
+                  {% endif %}
+                
+                {% elif session['user_role'] == 'influencer' %}
+                  {% if current_user.flagged %}
+                      <li class="nav-item ml-auto me-auto"><a class="nav-link" href="{{ url_for('influencer_profile') }}">Profile</a></li>
+                  {% else %}
+                    <li class="nav-item ml-auto me-auto"><a class="nav-link" href="{{ url_for('influencer_profile') }}">Profile</a></li>
+                    <li class="nav-item ml-auto me-auto"><a class="nav-link" href="{{ url_for('influencer_dash') }}">Dashboard</a></li>
+                    <li class="nav-item ml-auto me-auto"><a class="nav-link" href="{{ url_for('search_public_campaigns') }}">campaign</a></li>
+                    <li class="nav-item ml-auto me-auto"><a class="nav-link" href="{{ url_for('ad_requests') }}">Ad requests</a></li>
+                    <li class="nav-item ml-auto me-auto"><a class="nav-link" href="{{ url_for('influencer_ad_requests') }}">s2Ad requests</a></li>
+                  {% endif %}
+
+
                 {% elif session['user_role'] == 'admin' %}
                     <li class="nav-item ml-5"><a class="nav-link" href="{{ url_for('admin_dash') }}">Dashboard</a></li>
                     <li class="nav-item ml-5"><a class="nav-link" href="{{ url_for('admin_profile') }}">Profile</a></li>
                     <li class="nav-item ml-5"><a class="nav-link" href="{{ url_for('manage_users') }}">Users</a></li>
                     <li class="nav-item ml-5"><a class="nav-link" href="{{ url_for('manage_campaigns') }}">Campaigns</a></li>
-                {% elif session['user_role'] == 'influencer' %}
-                    <li class="nav-item ml-5"><a class="nav-link" href="{{ url_for('influencer_profile') }}">Profile</a></li>
-                    <li class="nav-item ml-5"><a class="nav-link" href="{{ url_for('influencer_dash') }}">Dashboard</a></li>
-                    <li class="nav-item ml-5"><a class="nav-link" href="{{ url_for('ad_requests') }}">Ad requests</a></li>
+
+                
+
                 {% endif %}
                 <li class="nav-item ml-auto">
                     <form class="form-inline my-2 my-lg-0" action="{{ url_for('homepage') }}" method="GET">
@@ -56,7 +72,7 @@
             {% else %}
                 <li class="nav-item ms-auto">
                     <span class="navbar-text">
-                        Welcome to Influencer Enagagement and Sponsor Coordination Platform.
+                        Welcome to Influencer Engagement and Sponsor Coordination Platform.
                     </span>
                 </li>
             {% endif %}

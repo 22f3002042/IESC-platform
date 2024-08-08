@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Search Public Campaigns</h1>
+<form method="POST" class="form-inline my-2 my-lg-0">
+    <input class="form-control mr-sm-2" type="search" placeholder="Niche" aria-label="Search" name="niche">
+    <input class="form-control mr-sm-2" type="number" placeholder="Min Budget" aria-label="Min Budget" name="min_budget">
+    <input class="form-control mr-sm-2" type="number" placeholder="Max Budget" aria-label="Max Budget" name="max_budget">
+    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+</form>
+<br>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Niche</th>
+            <th>Budget</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for campaign in campaigns %}
+        <tr>
+            <td>{{ campaign.title }}</td>
+            <td>{{ campaign.description }}</td>
+            <td>{{ campaign.niche }}</td>
+            <td>${{ campaign.budget }}</td>
+            <td>
+                <a href="{{ url_for('view_campaign_details', campaign_id=campaign.id) }}" class="btn btn-info">View</a>
+                <button class="btn btn-primary" data-toggle="modal" data-target="#applyCampaignModal-{{ campaign.id }}">Apply</button>
+            </td>
+        </tr>
+
+        <!-- Apply Campaign Modal -->
+        <div class="modal fade" id="applyCampaignModal-{{ campaign.id }}" tabindex="-1" role="dialog" aria-labelledby="applyCampaignModalLabel-{{ campaign.id }}" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <form method="POST" action="{{ url_for('apply_for_campaign', campaign_id=campaign.id) }}">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="applyCampaignModalLabel-{{ campaign.id }}">Apply for Campaign</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="details">Details</label>
+                                <textarea class="form-control" id="details" name="details" rows="3" required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="payment_amount">Payment Amount</label>
+                                <input type="number" class="form-control" id="payment_amount" name="payment_amount" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="ads_required">Ads Required</label>
+                                <input type="number" class="form-control" id="ads_required" name="ads_required" required>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Apply</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
