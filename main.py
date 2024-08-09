@@ -3,7 +3,6 @@ from db import db
 from datetime import datetime
 from models import User, Campaign,AdRequest
 
-
 app = Flask(__name__)
 
 app.config['SECRET_KEY'] = 'this_is_person_project.'
@@ -12,10 +11,11 @@ db.init_app(app)
 
 
 
+
 @app.route("/home")
 def homepage():
     if 'user_role' in session and session['user_role'] == 'admin':
-        return redirect(url_for('admin_dash'))
+        return redirect(url_for('admin_profile'))
 
     elif 'user_role' in session and session['user_role'] == 'sponsor':
         return redirect(url_for('sponsor_profile'))
@@ -54,7 +54,6 @@ def login():
             session['username'] = user.username 
             session['user_role'] = user.role
             session['email'] = user.email  
-            
             
 
             if user.role == 'admin':
@@ -127,7 +126,24 @@ def logout():
     flash(f'{username} - you have been logged out', 'danger')
     return redirect(url_for('homepage'))
 
+@app.route('/search', methods=['GET'])
+def search():
+    query = request.args.get('query', '').strip()  # Retrieve and trim the query string
 
+    if not query:  # Check if query is empty or whitespace
+        flash('No Result for this query!', 'warning')
+        return render_template('search_results.html', sponsors=[], influencers=[], campaigns=[], query=query)
+    
+    # Perform search logic and fetch results
+    sponsors = User.query.filter(User.role == 'sponsor', User.username.contains(query)).all()
+    influencers = User.query.filter(User.role == 'influencer', User.username.contains(query)).all()
+    campaigns = Campaign.query.filter(Campaign.title.contains(query)).all()
+
+    return render_template('search_results.html', 
+                           sponsors=sponsors, 
+                           influencers=influencers, 
+                           campaigns=campaigns,
+                           query=query)
 
 
 
@@ -190,7 +206,6 @@ def flag_user(user_id):
     user = User.query.get(user_id)
     if user:
         user.flagged = True
-        # user.flagged_notification = True
         db.session.commit()
         flash(f'{user.username} has been flagged.', 'warning')
     else:
@@ -263,13 +278,29 @@ def approve_unflag(user_id):
     return redirect(url_for('admin_unflag_requests'))
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ##########################################  admin campaign CRUD   ####################
 
 @app.route('/admin/campaigns', methods=['GET'])
 def manage_campaigns():
     campaigns = Campaign.query.all()
     flagged_campaigns = Campaign.query.filter_by(is_flagged=True).all()
-    return render_template('/admin/admin_campaigns.html', campaigns=campaigns, flagged_campaigns=flagged_campaigns)
+    return render_template('/campaigns/admin_cam/admin_campaigns.html', campaigns=campaigns, flagged_campaigns=flagged_campaigns)
 
 @app.route('/admin/campaigns/flag/<campaign_id>', methods=['POST'])
 def flag_campaign(campaign_id):
@@ -360,7 +391,6 @@ def sponsor_dash():
 
 
 
-
 @app.route('/sponsor/campaigns', methods=['GET', 'POST'])
 def sponsor_campaigns():
     if 'user_id' not in session or session['user_role'] != 'sponsor':
@@ -403,14 +433,14 @@ def sponsor_campaigns():
     sponsor_id = session['user_id']
     public_campaigns = Campaign.query.filter_by(visibility='public', sponsor_id=sponsor_id).all()
     private_campaigns = Campaign.query.filter_by(visibility='private', sponsor_id=sponsor_id).all()
-    return render_template('/sponsor/sponsor_campaigns.html', public_campaigns=public_campaigns, private_campaigns=private_campaigns)
+    return render_template('campaigns/sponsor_cam/sponsor_campaigns.html', public_campaigns=public_campaigns, private_campaigns=private_campaigns)
 
 @app.route('/campaign/<int:campaign_id>/view')
 def view_campaign(campaign_id):
     campaign = Campaign.query.get_or_404(campaign_id)
-    return render_template('sponsor/view_campaign.html', campaign=campaign)
+    return render_template('/campaigns/sponsor_cam/view_campaign.html', campaign=campaign)
 
-@app.route('/sponsor/campaigns/<int:campaign_id>/edit', methods=['GET', 'POST'])
+@app.route('/sponsor/campaigns/<int:campaign_id>/update', methods=['GET', 'POST'])
 def edit_campaign(campaign_id):
     campaign = Campaign.query.get_or_404(campaign_id)
     if campaign.sponsor_id != session['user_id']:
@@ -427,17 +457,17 @@ def edit_campaign(campaign_id):
         campaign.visibility = request.form['visibility']
         db.session.commit()
 
-        flash('Campaign updated successfully!', 'success')
+        flash(f'Campaign {campaign.title}  updated successfully!', 'success')
         return redirect(url_for('sponsor_campaigns'))
     
-    return render_template('/sponsor/edit_campaign.html', campaign=campaign)
+    return render_template('/campaigns/sponsor_cam/sponsor_campaigns.html', campaign=campaign)
 
 @app.route('/sponsor/campaigns/<int:campaign_id>/delete', methods=['POST'])
 def delete_campaign(campaign_id):
     campaign = Campaign.query.get_or_404(campaign_id)
     db.session.delete(campaign)
     db.session.commit()
-    flash('Campaign deleted successfully!', 'success')
+    flash(f'Campaign {campaign.title} deleted successfully!', 'success')
     return redirect(url_for('sponsor_campaigns'))
 
 
@@ -542,7 +572,7 @@ def update_ad_request(ad_request_id):
         flash('Ad request status updated successfully!', 'success')
         return redirect(url_for('sponsor_ad_requests',campaign_id=ad_request.campaign_id))
                
-@app.route('/ad_request/<int:ad_request_id>', methods=['GET'])
+@app.route('/sponsor/ad_request/<int:ad_request_id>', methods=['GET'])
 def sponsor_view_ad_request(ad_request_id):
     ad_request = AdRequest.query.get_or_404(ad_request_id)
     return render_template('/sponsor/sponsor_view_ad_request.html', ad_request=ad_request)
@@ -550,21 +580,6 @@ def sponsor_view_ad_request(ad_request_id):
 
 
 # #####################                               Influencer  route          ###########
-# @app.route('/influencer_dash')
-# def influencer_dash():
-#     if 'user_role' in session and session['user_role'] == 'influencer':
-#         username = session.get('username')
-#         flash(f'Welcome back Influencer - {username} ','success')
-
-#         if 'user_id' in session :
-#             influencer = User.query.get(session['user_id'])
-#             ad_requests = AdRequest.query.filter_by(influencer_id=influencer.id).all()
-#             public_campaigns = Campaign.query.filter_by(visibility='public').all()
-
-#             return render_template('/influencer/influencer_dash.html', influencer=influencer, ad_requests=ad_requests, public_campaigns=public_campaigns)
-#     else:
-#         flash('Please log in first!', 'danger')
-#         return redirect(url_for('login'))
 
 @app.route('/influencer_dash')
 def influencer_dash():
@@ -648,7 +663,7 @@ def search_public_campaigns():
         if max_budget is not None:
             campaigns = campaigns.filter(Campaign.budget <= max_budget)
 
-    return render_template('influencer/influencer_campaigns.html', campaigns=campaigns)
+    return render_template('/campaigns/influencer_cam/influencer_campaigns.html', campaigns=campaigns)
 
 @app.route('/influencer/campaign/<int:campaign_id>/apply', methods=['POST'])
 def apply_for_campaign(campaign_id):
@@ -675,24 +690,21 @@ def view_campaign_details(campaign_id):
         return redirect(url_for('homepage'))
     
     campaign = Campaign.query.get_or_404(campaign_id)
-    return render_template('influencer/campaign_details.html', campaign=campaign)
+    return render_template('/campaigns/influencer_cam/campaign_details.html', campaign=campaign)
 
 
 
 
 
-
-
-                                                    #ads requests
+#####################                                            #ads requests
 
 @app.route('/influencer/ad-requests', methods=['GET'])
 def influencer_ad_requests():
-    # Fetch sent ad requests (for public campaigns)
-    influencer_id = session['user_id']
+    influencer_id = session['user_id']   # Fetch sent ad requests (for public campaigns)
 
     # Sent ad requests are those where the influencer is sending the request
     sent_ad_requests = AdRequest.query.join(Campaign).filter(AdRequest.influencer_id == influencer_id, 
-    Campaign.id == AdRequest.campaign_id, Campaign.visibility == 'public').all()
+        Campaign.id == AdRequest.campaign_id, Campaign.visibility == 'public').all()
 
     # Received ad requests are those where the influencer is receiving the request
     received_ad_requests = AdRequest.query.join(Campaign).filter(AdRequest.influencer_id == influencer_id,
@@ -797,7 +809,7 @@ def influencer_delete_ad_request(ad_request_id):
 
 
 
-      ###############################for ad_request.html file   ########                                                   
+                                                 
 
 
 
@@ -815,15 +827,7 @@ def influencer_delete_ad_request(ad_request_id):
 
 
 
-@app.route('/ad_requests')
-def ad_requests():
-    if 'user_id' not in session or session['user_role'] != 'influencer':
-        flash('You need to be logged in as an influencer to view ad requests.', 'danger')
-        return redirect(url_for('login'))
-    user_id = session['user_id']
-    ad_request_id = AdRequest.query.filter_by(influencer_id=user_id).all()
-
-    return render_template('influencer/ad_requests.html', ad_request_id=ad_request_id)
+#### these preivous adrequest for infl no using now delete them
 
 @app.route('/ad_request/<int:ad_request_id>/accept', methods=['POST'])
 def accept_ad_request(ad_request_id):
@@ -963,29 +967,6 @@ def delete_ad_request(ad_request_id):
 
 
 
-# @app.route('/influencer/ad_requests', methods=['GET'])
-# def influencer_ad_requests():
-#     if 'user_id' not in session or session['user_role'] != 'influencer':
-#         flash('You need to be logged in as an influencer to view ad requests.', 'danger')
-#         return redirect(url_for('login'))
-
-#     ad_requests = AdRequest.query.filter_by(influencer_id=session['user_id']).all()
-#     return render_template('influencer_ad_requests.html', ad_requests=ad_requests)
-
-# @app.route('/influencer/ad_request/<int:ad_request_id>/respond', methods=['POST'])
-# def respond_ad_request(ad_request_id):
-#     ad_request = AdRequest.query.get_or_404(ad_request_id)
-
-#     if 'user_id' not in session or session['user_role'] != 'influencer' or ad_request.influencer_id != session['user_id']:
-#         flash('You do not have permission to respond to this ad request.', 'danger')
-#         return redirect(url_for('influencer_ad_requests'))
-
-#     ad_request.status = request.form['status']
-#     ad_request.details = request.form['details']
-    
-#     db.session.commit()
-#     flash('Ad request updated successfully!', 'success')
-#     return redirect(url_for('influencer_ad_requests'))
 
 
 
@@ -1042,8 +1023,6 @@ def create_table():
 
 if __name__ == '__main__':
     with app.app_context():
-        
-    
         app.run(debug=True,port=8000)
     
 

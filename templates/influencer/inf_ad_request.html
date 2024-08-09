@@ -25,13 +25,13 @@
                             <p class="card-text">Ads Completed: {{ ad_request.ads_completed }} / {{ ad_request.ads_required }}</p>
                             
                             <!-- View button -->
-                            <a href="{{ url_for('inf_view_ad_request', ad_request_id=ad_request.id) }}" class="btn btn-info">View</a>
+                            <a href="{{ url_for('inf_view_ad_request', ad_request_id=ad_request.id) }}" class="btn btn-secondary">View</a>
 
                             <!-- Update button -->
                             <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#updatePublicAdRequestModal-{{ ad_request.id }}">
                                 Update
                             </button>
-
+                            
                             <!-- Delete button -->
                             <form method="POST" action="{{ url_for('influencer_delete_ad_request', ad_request_id=ad_request.id) }}" style="display:inline;">
                                 <button type="submit" class="btn btn-danger">Delete</button>
@@ -105,6 +105,11 @@
                             <p class="card-text">Status: {{ ad_request.status }}</p>
                             <p class="card-text">Ads Completed: {{ ad_request.ads_completed }} / {{ ad_request.ads_required }}</p>
                             
+
+
+
+                            <!--  back button -->
+                            <a href="{{ url_for('inf_view_ad_request', ad_request_id=ad_request.id) }}" class="btn btn-secondary" style="display:inline;">View</a>
                             <!-- Approve button -->
                             <form method="POST" action="{{ url_for('influencer_update_ad_request', ad_request_id=ad_request.id) }}" style="display:inline;">
                                 <input type="hidden" name="status" value="approved">
@@ -120,7 +125,7 @@
                             <!-- Mark as Completed button -->
                             <form method="POST" action="{{ url_for('influencer_update_ad_request', ad_request_id=ad_request.id) }}" style="display:inline;">
                                 <input type="hidden" name="status" value="completed">
-                                <button type="submit" class="btn btn-info">Mark Completed</button>
+                                <button type="submit" class="btn btn-info">Completed</button>
                             </form>
                         </div>
                     </div>

@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Details{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>{{ 'User' if item.username else 'Campaign' }} Details</h2>
+
+    <div class="card">
+        <div class="card-body">
+            {% if item.username %}
+                <!-- User Details -->
+                <h5 class="card-title">{{ item.username }}</h5>
+                <h6 class="card-subtitle mb-2 text-muted">{{ item.role.capitalize() }}</h6>
+                <p class="card-text"><strong>Niche:</strong> {{ item.niche }}</p>
+                <p class="card-text"><strong>Email:</strong> {{ item.email }}</p>
+                <!-- Add more user details as needed -->
+            {% else %}
+                <!-- Campaign Details -->
+                <h5 class="card-title">{{ item.title }}</h5>
+                <h6 class="card-subtitle mb-2 text-muted">Niche: {{ item.niche }}</h6>
+                <p class="card-text"><strong>Description:</strong> {{ item.description }}</p>
+                <p class="card-text"><strong>Start Date:</strong> {{ item.start_date.strftime('%Y-%m-%d') }}</p>
+                <p class="card-text"><strong>End Date:</strong> {{ item.end_date.strftime('%Y-%m-%d') }}</p>
+                <p class="card-text"><strong>Budget:</strong> ${{ item.budget }}</p>
+                <p class="card-text"><strong>Status:</strong> {{ item.status }}</p>
+                <!-- Add more campaign details as needed -->
+            {% endif %}
+
+            <a href="{{ url_for('search') }}" class="btn btn-secondary">Back to Search Results</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

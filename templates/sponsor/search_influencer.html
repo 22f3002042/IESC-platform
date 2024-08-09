@@ -5,8 +5,6 @@
 {% block content %}
 <div class="container mt-5">
     <h2 class="mb-4">All Influencers</h2>
-
-    <!-- Influencers List Section -->
     <div class="row">
         {% for influencer in influencers %}
         <div class="col-md-4 mb-3">
@@ -15,7 +13,34 @@
                     <h5 class="card-title">{{ influencer.username }}</h5>
                     <p class="card-text">Niche: {{ influencer.niche }}</p>
                     <p class="card-text">Reach: {{ influencer.reach }}</p>
-                    <a href="{{ url_for('influencer_profile', influencer_id=influencer.id) }}" class="btn btn-info">View Profile</a>
+                    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#profileModal{{ influencer.id }}">
+                        View Profile
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Influencer Profile Modal -->
+        <div class="modal fade" id="profileModal{{ influencer.id }}" tabindex="-1" role="dialog" aria-labelledby="profileModalLabel{{ influencer.id }}" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="profileModalLabel{{ influencer.id }}">Influencer Profile: {{ influencer.username }}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p><strong>User Id:</strong> {{ influencer.id }}</p>
+                        <p><strong>Username:</strong> {{ influencer.username }}</p>
+                        <p><strong>Contact :</strong> {{ influencer.email }}</p>
+                        <p><strong>Category:</strong> {{ influencer.category }}</p>
+                        <p><strong>Niche:</strong> {{ influencer.niche }}</p>
+                        <p><strong>Followers:</strong> {{ influencer.reach }}</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
                 </div>
             </div>
         </div>

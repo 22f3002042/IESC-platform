@@ -16,9 +16,9 @@
                             <strong>Campaign:</strong> {{ ad_request.campaign.title }}<br>
                             <strong> ad request details:</strong> {{ ad_request.details}}<br>
                             <strong>Status:</strong> {{ ad_request.status }}<br>
-                            <a href="{{ url_for('view_ad_request', ad_request_id=ad_request.id) }}" class="btn btn-info">View Details</a>
-                            {% if ad_request.status == 'pending' %}
-                                <a href="{{ url_for('accept_ad_request', ad_request_id=ad_request.id) }}" class="btn btn-success">Accept</a>
+                            <a href="{{ url_for('inf_view_ad_request', ad_request_id=ad_request.id) }}" class="btn btn-info">View Details</a>
+                            {% if ad_request.status == 'pending' %}             
+                                <a href="{{ url_for('accept_ad_request', ad_request_id=ad_request.id) }}" class="btn btn-success">Accept</a>   ##excellmemt
                                 <a href="{{ url_for('reject_ad_request', ad_request_id=ad_request.id) }}" class="btn btn-danger">Reject</a>
                                 <a href="{{ url_for('negotiate_ad_request', ad_request_id=ad_request.id) }}" class="btn btn-warning">Negotiate</a>
                             {% endif %}

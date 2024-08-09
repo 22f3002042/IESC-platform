@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block title %}Search Results{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Search Results for "{{query}}"</h2>
+
+    
+    <h3>Sponsors</h3>
+    {% if sponsors %}
+        <div class="row">
+            {% for sponsor in sponsors %}
+                <div class="col-md-4">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ sponsor.username }}</h5>
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#userModal{{ sponsor.id }}">View Details</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal for User Details -->
+                <div class="modal fade" id="userModal{{ sponsor.id }}" tabindex="-1" aria-labelledby="userModalLabel{{ sponsor.id }}" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="userModalLabel{{ sponsor.id }}">User Details</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <h5 class="card-title">{{ sponsor.username }}</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">{{ sponsor.role.capitalize() }}</h6>
+                                <p class="card-text"><strong>Industry:</strong> {{ sponsor.industry }}</p>
+                                <p class="card-text"><strong>Email:</strong> {{ sponsor.email }}</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                    
+            {% endfor %}
+    {% else %}
+        <p>No sponsors found.</p>
+    {% endif %}
+
+    <h3>Influencers</h3>
+    {% if influencers %}
+        <div class="row">
+            {% for influencer in influencers %}
+                <div class="col-md-4">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ influencer.username }}</h5>
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#userModal{{ influencer.id }}">View Details</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal for User Details -->
+                <div class="modal fade" id="userModal{{ influencer.id }}" tabindex="-1" aria-labelledby="userModalLabel{{ influencer.id }}" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="userModalLabel{{ influencer.id }}">User Details</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <h5 class="card-title">{{ influencer.username }}</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">{{ influencer.role.capitalize() }}</h6>
+                                <p class="card-text"><strong>Niche:</strong> {{ influencer.niche }}</p>
+                                <p class="card-text"><strong>Email:</strong> {{ influencer.email }}</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No influencers found.</p>
+    {% endif %}
+
+    <h3>Campaigns</h3>
+    {% if campaigns %}
+        <div class="row">
+            {% for campaign in campaigns %}
+                <div class="col-md-4">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ campaign.title }}</h5>
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#campaignModal{{ campaign.id }}">View Details</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal for Campaign Details -->
+                <div class="modal fade" id="campaignModal{{ campaign.id }}" tabindex="-1" aria-labelledby="campaignModalLabel{{ campaign.id }}" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="campaignModalLabel{{ campaign.id }}">Campaign Details</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <h5 class="card-title">{{ campaign.title }}</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">Niche: {{ campaign.niche }}</h6>
+                                <p class="card-text"><strong>Description:</strong> {{ campaign.description }}</p>
+                                <p class="card-text"><strong>Start Date:</strong> {{ campaign.start_date.strftime('%Y-%m-%d') }}</p>
+                                <p class="card-text"><strong>End Date:</strong> {{ campaign.end_date.strftime('%Y-%m-%d') }}</p>
+                                <p class="card-text"><strong>Budget:</strong> {{ campaign.budget }} Rs.</p>
+                                <p class="card-text"><strong>Status:</strong> {{ campaign.status }}</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No campaigns found.</p>
+    {% endif %}
+</div>
+{% endblock %}
+
