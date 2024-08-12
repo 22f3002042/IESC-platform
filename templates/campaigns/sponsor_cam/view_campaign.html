@@ -4,23 +4,22 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h2>{{ campaign.title }}</h2>
+    <h2>{{ campaign.title }}</h2><hr>
     <p><strong>Description:</strong> {{ campaign.description }}</p>
     <p><strong>Niche:</strong> {{ campaign.niche }}</p>
     <p><strong>Start Date:</strong> {{ campaign.start_date }}</p>
     <p><strong>End Date:</strong> {{ campaign.end_date }}</p>
     <p><strong>Budget:</strong> {{ campaign.budget }} Rs.</p>
     <p><strong>Visibility:</strong> {{ campaign.visibility }}</p>
-    <p><strong>Status:</strong> {{ campaign.status }}</p>
     <p><strong>Status:</strong> <span class="
-        {% if campaign.status == 'ongoing' %}text-white bg-primary rounded px-1  align-items-center justify-content-center
-        {% elif campaign.status == 'completed' %}text-white bg-success rounded px-1  align-items-center justify-content-center
-        {% elif campaign.status == 'ended' %}text-white bg-warning rounded px-1 align-items-center justify-content-center{% endif %}">{{ campaign.status }}</span>
+        {% if campaign.status == 'Active' %}text-white bg-success rounded px-1  align-items-center justify-content-center
+        {% elif campaign.status == 'Completed' %}text-white bg-primary rounded px-1  align-items-center justify-content-center
+        {% elif campaign.status == 'Paused' %}text-white bg-warning rounded px-1  align-items-center justify-content-center
+        {% elif campaign.status == 'Canceled' %}text-white bg-danger rounded px-1 align-items-center justify-content-center{% endif %}">{{ campaign.status }}</span>
     </p>
     <p><strong>Goals:</strong> {{ campaign.goals }}</p>
 
-    
 
-    <a href="{{ url_for('sponsor_campaigns') }}" class="btn btn-secondary">Back</a>
+    <a href="{{ url_for('sponsor_campaigns') }}" class="btn btn-secondary">Back</a> 
 </div>
 {% endblock %}

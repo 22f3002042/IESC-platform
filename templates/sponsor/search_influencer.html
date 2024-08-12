@@ -3,8 +3,34 @@
 {% block title %}All Influencers{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <h2 class="mb-4">All Influencers</h2>
+<div class="container mt-4 mb-3">
+    <h2 class="mb-4">Search  Influencers</h2>
+    <div class="container d-flex justify-content-center ">
+        <form action="{{ url_for('search_influencers') }}" method="GET" class="mb-4">
+            <div class="row d-flex justify-content-center ">
+                <div class="col-md-4">
+                    <input type="text" name="username" class="form-control" placeholder="Search by Username" value="{{ request.args.get('username', '') }}">
+                </div>
+                <div class="col-md-4">
+                    <input type="text" name="niche" class="form-control" placeholder="Filter by Niche" value="{{ request.args.get('niche', '') }}">
+                </div>
+                <div class="col-md-2">
+                    <input type="number" name="min_reach" class="form-control" placeholder="Min Reach" value="{{ request.args.get('min_reach', '') }}">
+                </div>
+                <div class="col-md-2">
+                    <input type="number" name="max_reach" class="form-control" placeholder="Max Reach" value="{{ request.args.get('max_reach', '') }}">
+                </div>
+                <div class="col-md-2 mt-3 ">
+                    <button type="submit" class="btn btn-primary w-100 h-100">Search</button>
+                </div>
+                <div class="col-md-2 mt-3 ">
+                    <a href="{{ url_for('sponsor_influencer') }}" class="btn btn-secondary w-100 h-100">Clear Filters</a>
+                </div>
+            </div>
+        </form>
+    </div><hr>
+
+    <!-- Influencers Display -->
     <div class="row">
         {% for influencer in influencers %}
         <div class="col-md-4 mb-3">
@@ -46,5 +72,9 @@
         </div>
         {% endfor %}
     </div>
+
+    {% if influencers|length == 0 %}
+    <p class="text-center text-muted">No influencers found matching your criteria.</p>
+    {% endif %}
 </div>
 {% endblock %}

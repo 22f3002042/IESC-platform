@@ -1,130 +1,94 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
+
+{% block title %}
+Influencer Dashboard
+{% endblock %}
+
 {% block content %}
 <div class="container mt-5">
-    <h2 class="mb-4">Influencer Dashboard</h2>
+    <h1 class="mb-4">Influencer Dashboard</h1>
 
-    <!-- Ad Requests -->
-    <div class="card mb-4">
-        <div class="card-header">
-            <h4>Ad Requests</h4>
+    <div class="row">
+        <div class="col-md-6">
+            <!-- Public Campaigns Chart -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Public Campaigns</h5>
+                    <canvas id="publicCampaignsChart"></canvas>
+                </div>
+            </div>
         </div>
-        <div class="card-body">
-            {% if ad_requests %}
-                <ul class="list-group">
-                    {% for ad_request in ad_requests %}
-                        <li class="list-group-item">
-                            <strong>Campaign:</strong> {{ ad_request.campaign.title }}<br>
-                            <strong> ad request details:</strong> {{ ad_request.details}}<br>
-                            <strong>Status:</strong> {{ ad_request.status }}<br>
-                            <a href="{{ url_for('inf_view_ad_request', ad_request_id=ad_request.id) }}" class="btn btn-info">View Details</a>
-                            {% if ad_request.status == 'pending' %}             
-                                <a href="{{ url_for('accept_ad_request', ad_request_id=ad_request.id) }}" class="btn btn-success">Accept</a>   ##excellmemt
-                                <a href="{{ url_for('reject_ad_request', ad_request_id=ad_request.id) }}" class="btn btn-danger">Reject</a>
-                                <a href="{{ url_for('negotiate_ad_request', ad_request_id=ad_request.id) }}" class="btn btn-warning">Negotiate</a>
-                            {% endif %}
-                        </li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <p>No ad requests at the moment.</p>
-            {% endif %}
-        </div>
-    </div>
 
-    
-    
-    <!-- Public Campaigns -->
-    <div class="card mb-4">
-        <div class="card-header">
-            <h4>Public Campaigns</h4>
+        <div class="col-md-6">
+            <!-- Ad Requests Status Chart -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Ad Requests Status</h5>
+                    <canvas id="adRequestsStatusChart"></canvas>
+                </div>
+            </div>
         </div>
-        <div class="card-body">
-            {% if public_campaigns %}
-                <ul class="list-group">
-                    {% for campaign in public_campaigns %}
-                        <li class="list-group-item">
-                            <strong>Title:</strong> {{ campaign.title }}<br>
-                            <strong>Description:</strong> {{ campaign.description }}<br>
-                            <strong>Niche:</strong> {{ campaign.niche }}<br>
-                            <strong>Budget:</strong> {{ campaign.budget }}<br><br>
-                            <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#viewCampaignModal" data-campaign-id="{{ campaign.id }}">View Details</button>
-                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#submitAdRequestModal" data-campaign-id="{{ campaign.id }}">Submit Ad Request</button>
-                        </li>
+
+        <div class="col-md-12">
+            <!-- Active Sponsors -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Active Sponsors</h5>
+                    <ul class="list-group">
+                        {% for sponsor in data.active_sponsors %}
+                            <li class="list-group-item">{{ sponsor.username }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-12">
+            <!-- Ad Requests Received and Sent -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Ad Requests </h5>
+                    <p>Ads: {{ data.ad_requests }}</p>
                     
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <p>No public campaigns available at the moment.</p>
-            {% endif %}
-        </div>
-    </div>
-    <!-- pop up form of viewing campaign  -->
-    <div class="modal fade" id="viewCampaignModal" tabindex="-1" aria-labelledby="viewCampaignModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="viewCampaignModalLabel">Campaign Details</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
             </div>
-            {% for campaign in public_campaigns %}
-                <div class="modal-body">
-                    <h4>{{ campaign.title }}</h4>
-                    <p><strong>Description:</strong> {{ campaign.description }}</p>
-                    <p><strong>Niche:</strong> {{ campaign.niche }}</p>
-                    <p><strong>Start Date:</strong> {{ campaign.start_date.strftime('%Y-%m-%d') }}</p>
-                    <p><strong>End Date:</strong> {{ campaign.end_date.strftime('%Y-%m-%d') }}</p>
-                    <p><strong>Budget:</strong> {{ campaign.budget }} Rs.</p>
-                    <p><strong>Status:</strong> {{ campaign.status }}</p>
-                    <p><strong>Visibility:</strong> {{ campaign.visibility }}</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <a href="{{ url_for('influencer_dash', campaign_id=campaign.id) }}" class="btn btn-primary">Submit Ad Request</a>
-                </div>
-            {% endfor %}
-          </div>
-        </div>
-    </div>
-    <!-- pop up form of submitting ad reuquest   -->
-    <div class="modal fade" id="submitAdRequestModal" tabindex="-1" aria-labelledby="submitAdRequestModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="submitAdRequestModalLabel">Submit Ad Request</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form action="{{ url_for('influencer_dash', campaign_id=campaign_id) }}" method="POST">
-              <div class="modal-body">
-                <div class="form-group">
-                  <label for="submission">Submission Details</label>
-                  <textarea class="form-control" id="submission" name="submission" rows="4" required></textarea>
-                </div>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="submit" class="btn btn-primary">Submit</button>
-              </div>
-            </form>
-          </div>
-        </div>
-    </div>
-
-
-
-    <!-- Statistics -->
-    <div class="card mb-4">
-        <div class="card-header">
-            <h4>Statistics</h4>
-        </div>
-        <div class="card-body">
-            <p>Performance metrics related to your campaigns will be displayed here.</p>
         </div>
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const data = {{ data | tojson }};
+
+    // Public Campaigns Chart
+    const publicCampaignsChart = new Chart(document.getElementById('publicCampaignsChart'), {
+        type: 'pie',
+        data: {
+            labels: data.public_campaigns,
+            datasets: [{
+                label: 'Public Campaigns',
+                data: data.public_campaigns.map(campaign => 1),  // Dummy data to display a chart
+                backgroundColor: '#36a2eb'
+            }]
+        }
+    });
+
+    // Ad Requests Status Chart
+    const adRequestsStatusChart = new Chart(document.getElementById('adRequestsStatusChart'), {
+        type: 'pie',
+        data: {
+            labels: ['Pending', 'Accepted', 'Rejected', 'Completed'],
+            datasets: [{
+                label: 'Ad Requests Status',
+                data: [
+                    data.ad_requests_status.Pending,
+                    data.ad_requests_status.Accepted,
+                    data.ad_requests_status.Rejected,
+                    data.ad_requests_status.Completed
+                ],
+                backgroundColor: ['#ff6384', '#36a2eb', '#ffce56', '#4bc0c0']
+            }]
+        }
+    });
+</script>
 {% endblock %}
-
-
-
-
-

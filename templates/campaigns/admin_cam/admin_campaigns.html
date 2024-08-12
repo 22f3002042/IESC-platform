@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="container mt-3">
-    <h2 class="mb-4">Manage Campaigns</h2>
+    <h2 class="mb-4">Manage Campaigns</h2><hr>
 
     <!-- Campaigns Section -->
     <div class="mb-5">
@@ -17,14 +17,13 @@
                             <div class="card-body">
                                 <h5 class="card-title">{{ campaign.title }}</h5>
                                 <p class="card-text">
-                                    <strong>Description:</strong> {{ campaign.description }}<br>
+                                    <strong>Sponsor:</strong> {{ campaign.sponsor.username }}<br>
                                     <strong>Niche:</strong> {{ campaign.niche }}<br>
-                                    <strong>Start Date:</strong> {{ campaign.start_date }}<br>
-                                    <strong>End Date:</strong> {{ campaign.end_date }}<br>
                                     <strong>Budget:</strong> {{ campaign.budget }}<br>
                                     <strong>Status:</strong> {{ campaign.status }}<br>
                                     <strong>Visibility:</strong> {{ campaign.visibility }}
                                 </p>
+                                <a href="{{ url_for('ad_view_campaign', campaign_id=campaign.id) }}" class="btn btn-info">View</a>
                                 <form method="POST" action="{{ url_for('flag_campaign', campaign_id=campaign.id) }}" style="display:inline;">
                                     <button type="submit" class="btn btn-warning">Flag Campaign</button>
                                 </form>
@@ -46,10 +45,8 @@
                         <div class="card-body">
                             <h5 class="card-title">{{ campaign.title }}</h5>
                             <p class="card-text">
-                                <strong>Description:</strong> {{ campaign.description }}<br>
+                                <strong>Sponsor:</strong> {{ campaign.sponsor.username }}<br>
                                 <strong>Niche:</strong> {{ campaign.niche }}<br>
-                                <strong>Start Date:</strong> {{ campaign.start_date }}<br>
-                                <strong>End Date:</strong> {{ campaign.end_date }}<br>
                                 <strong>Budget:</strong> {{ campaign.budget }}<br>
                                 <strong>Status:</strong> {{ campaign.status }}<br>
                                 <strong>Visibility:</strong> {{ campaign.visibility }}

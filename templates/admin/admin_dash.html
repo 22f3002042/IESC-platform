@@ -1,8 +1,166 @@
-{% extends "base.html" %} 
-{% block title %} Admin Dashboard {% endblock %} 
-{% block content%}
-<h3>THIS IS the admin Dashboard</h3>
+{% extends 'base.html' %}
 
-<a href="unflag_requests.html"> unflag requests Admin</a>
+{% block title %}
+Admin Dashboard
 {% endblock %}
 
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">Admin Dashboard</h1>
+
+    <div class="row ">
+        <!-- Total Users Chart -->
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Total Users</h5>
+                    <canvas id="totalUsersChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ad Requests per Campaign Chart -->
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Ad Requests per Campaign</h5>
+                    <canvas id="adRequestsPerCampaignChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Campaign Status Chart -->
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Campaign Status</h5>
+                    <canvas id="campaignStatusChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ad Requests Status Chart -->
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Ad Requests Status</h5>
+                    <canvas id="adRequestsStatusChart"></canvas>
+                </div>
+            </div>
+        </div>        
+
+        <!-- Progress of Campaigns Chart -->
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Progress of Campaigns</h5>
+                    <canvas id="progressOfCampaignsChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Flagged Campaigns or Users Chart -->
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Flagged Campaigns or Users</h5>
+                    <canvas id="flaggedCampaignsOrUsersChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const data = {{ data | tojson }};
+
+    // Total Users Chart
+    const totalUsersChart = new Chart(document.getElementById('totalUsersChart'), {
+        type: 'bar',
+        data: {
+            labels: ['Total Users', 'Influencers', 'Sponsors'],
+            datasets: [{
+                label: 'Count',
+                data: [data.total_users, data.total_influencers, data.total_sponsors],
+                backgroundColor: ['#36a2eb', '#ff6384', '#4bc0c0']
+            }]
+        }
+    });
+
+    // Campaign Status Chart
+    const campaignStatusChart = new Chart(document.getElementById('campaignStatusChart'), {
+        type: 'doughnut',
+        data: {
+            labels: ['Public', 'Private'],
+            datasets: [{
+                label: 'Campaign Status',
+                data: [data.campaign_status.public, data.campaign_status.private],
+                backgroundColor: ['#ff6384', '#36a2eb']
+            }]
+        }
+    });
+
+    // Ad Requests per Campaigns Chart
+    const adRequestsPerCampaignChart = new Chart(document.getElementById('adRequestsPerCampaignChart'), {
+        type: 'bar',
+        data: {
+            labels: data.campaign_names,
+            datasets: [{
+                label: 'Ad Requests',
+                data: data.ad_requests_per_campaign,
+                backgroundColor: '#4bc0c0'
+            }]
+        }
+    });
+
+    // Progress of Campaigns Chart
+    const progressOfCampaignsChart = new Chart(document.getElementById('progressOfCampaignsChart'), {
+        type: 'line',
+        data: {
+            labels: data.campaign_names,
+            datasets: [{
+                label: 'Campaign Progress (%)',
+                data: data.campaign_progress,
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1,
+                fill: true,
+            }]
+        }
+    });
+
+    // Flagged Campaigns or Users Chart
+    const flaggedCampaignsOrUsersChart = new Chart(document.getElementById('flaggedCampaignsOrUsersChart'), {
+        type: 'pie',
+        data: {
+            labels: ['Flagged Users', 'Flagged Campaigns'],
+            datasets: [{
+                label: 'Flagged Count',
+                data: [data.flagged_users, data.flagged_campaigns],
+                backgroundColor: ['#ff6384', '#36a2eb'],
+            }]
+        }
+    });
+
+    // Ad Requests Status Chart
+    const adRequestsStatusChart = new Chart(document.getElementById('adRequestsStatusChart'), {
+        type: 'pie',
+        data: {
+            labels: ['Pending', 'Accepted', 'Rejected', 'Completed'],
+            datasets: [{
+                label: 'Ad Requests Status',
+                data: [
+                    data.ad_requests_status.Pending,
+                    data.ad_requests_status.Accepted,
+                    data.ad_requests_status.Rejected,
+                    data.ad_requests_status.Completed
+                ],
+                backgroundColor: ['#ff6384', '#36a2eb', '#ffce56', '#4bc0c0']
+            }]
+        }
+    });
+</script>
+{% endblock %}

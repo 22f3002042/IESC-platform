@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block title %}View Campaign{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>{{ campaign.title }}</h2><hr>
+    <p><strong>Sponsor: </strong>{{ campaign.sponsor.username }}</p>
+    <p><strong>Description:</strong> {{ campaign.description }}</p>
+    <p><strong>Niche:</strong> {{ campaign.niche }}</p>
+    <p><strong>Start Date:</strong> {{ campaign.start_date }}</p>
+    <p><strong>End Date:</strong> {{ campaign.end_date }}</p>
+    <p><strong>Budget:</strong> {{ campaign.budget }} Rs.</p>
+    <p><strong>Visibility:</strong> {{ campaign.visibility }}</p>
+    <p><strong>Status:</strong> <span class="
+        {% if campaign.status == 'Active' %}text-white bg-success rounded px-1  align-items-center justify-content-center
+        {% elif campaign.status == 'Completed' %}text-white bg-primary rounded px-1  align-items-center justify-content-center
+        {% elif campaign.status == 'Paused' %}text-white bg-warning rounded px-1  align-items-center justify-content-center
+        {% elif campaign.status == 'Canceled' %}text-white bg-danger rounded px-1 align-items-center justify-content-center{% endif %}">{{ campaign.status }}</span>
+    </p>
+    <p><strong>Goals:</strong> {{ campaign.goals }}</p>
+
+    <a href="{{ url_for('manage_campaigns') }}" class="btn btn-secondary">Back</a>
+
+    <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#adRequestsModal">
+        View Ads Requests
+    </button>
+
+    
+    <!-- Modal -->
+    <div class="modal fade" id="adRequestsModal" tabindex="-1" aria-labelledby="adRequestsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="adRequestsModalLabel">Ad Requests for {{ campaign.title }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Influencer</th>
+                                <th>Status</th>
+                                <th>Ads Required</th>
+                                <th>Ads Completed</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for ad_request in campaign.ad_requests %}
+                                <tr>
+                                    <td>{{ ad_request.id }}</td>
+                                    <td>{{ ad_request.influencer.username }}</td>
+                                    <td>{{ ad_request.status }}</td>
+                                    <td>{{ ad_request.ads_required }}</td>
+                                    <td>{{ ad_request.ads_completed }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

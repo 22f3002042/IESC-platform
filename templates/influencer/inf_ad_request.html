@@ -18,21 +18,15 @@
                     <div class="card">
                         <div class="card-body">
                             <h5 class="card-title">{{ ad_request.campaign.title }}</h5>
-                            <p class="card-text">Details: {{ ad_request.details }}</p>
-                            <p class="card-text">Payment Amount: {{ ad_request.payment_amount }}</p>
-                            <p class="card-text"> influencer : {{ ad_request.influencer_id}}  #need to be delete </p>
-                            <p class="card-text">Status: {{ ad_request.status }}</p>
+                            <p class="card-text">Sponsor: {{ ad_request.sponsor.username }}</p>
+                            <p class="card-text">Status: <strong>{{ ad_request.status }}</strong></p>
+                            <p class="card-text">Payment Amount: {{ ad_request.payment_amount }} Rs.</p>
                             <p class="card-text">Ads Completed: {{ ad_request.ads_completed }} / {{ ad_request.ads_required }}</p>
-                            
-                            <!-- View button -->
-                            <a href="{{ url_for('inf_view_ad_request', ad_request_id=ad_request.id) }}" class="btn btn-secondary">View</a>
 
-                            <!-- Update button -->
+                            <a href="{{ url_for('inf_view_ad_request', ad_request_id=ad_request.id) }}" class="btn btn-secondary">View</a>
                             <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#updatePublicAdRequestModal-{{ ad_request.id }}">
                                 Update
                             </button>
-                            
-                            <!-- Delete button -->
                             <form method="POST" action="{{ url_for('influencer_delete_ad_request', ad_request_id=ad_request.id) }}" style="display:inline;">
                                 <button type="submit" class="btn btn-danger">Delete</button>
                             </form>
@@ -71,10 +65,10 @@
                                     <div class="form-group">
                                         <label for="status">Status</label>
                                         <select class="form-control" id="status" name="status" required>
-                                            <option value="pending" {% if ad_request.status == 'pending' %}selected{% endif %}>Pending</option>
-                                            <option value="approved" {% if ad_request.status == 'approved' %}selected{% endif %}>Approved</option>
-                                            <option value="rejected" {% if ad_request.status == 'rejected' %}selected{% endif %}>Rejected</option>
-                                            <option value="completed" {% if ad_request.status == 'completed' %}selected{% endif %}>Completed</option>
+                                            <option value="Pending" {% if ad_request.status == 'Pending' %}selected{% endif %}>Pending</option>
+                                            <option value="Accepted" {% if ad_request.status == 'Accepted' %}selected{% endif %}>Accepted</option>
+                                            <option value="Rejected" {% if ad_request.status == 'Rejected' %}selected{% endif %}>Rejected</option>
+                                            <option value="Completed" {% if ad_request.status == 'Completed' %}selected{% endif %}>Completed</option>
                                         </select>
                                     </div>
                                 </div>
@@ -99,33 +93,84 @@
                     <div class="card">
                         <div class="card-body">
                             <h5 class="card-title">{{ ad_request.campaign.title }}</h5>
-                            <p class="card-text">Details: {{ ad_request.details }}</p>
-                            <p class="card-text">Payment Amount: {{ ad_request.payment_amount }}</p>
-                            <p class="card-text"> influencer : {{ ad_request.influencer_id}}   #need to be delete  </p>   
-                            <p class="card-text">Status: {{ ad_request.status }}</p>
+                            <p class="card-text">Sponsor: {{ ad_request.sponsor.username }}</p>
+                            <p class="card-text ">Status: <strong>{{ ad_request.status }}</strong></p>
+                            <p class="card-text">Payment Amount: {{ ad_request.payment_amount }} Rs.</p>
                             <p class="card-text">Ads Completed: {{ ad_request.ads_completed }} / {{ ad_request.ads_required }}</p>
-                            
-
-
-
-                            <!--  back button -->
                             <a href="{{ url_for('inf_view_ad_request', ad_request_id=ad_request.id) }}" class="btn btn-secondary" style="display:inline;">View</a>
-                            <!-- Approve button -->
-                            <form method="POST" action="{{ url_for('influencer_update_ad_request', ad_request_id=ad_request.id) }}" style="display:inline;">
-                                <input type="hidden" name="status" value="approved">
-                                <button type="submit" class="btn btn-success">Approve</button>
-                            </form>
+                            <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#updatePrivateAdRequestModal-{{ ad_request.id }}">
+                                Update
+                            </button>
 
-                            <!-- Reject button -->
-                            <form method="POST" action="{{ url_for('influencer_update_ad_request', ad_request_id=ad_request.id) }}" style="display:inline;">
-                                <input type="hidden" name="status" value="rejected">
-                                <button type="submit" class="btn btn-danger">Reject</button>
-                            </form>
+                            <!-- Conditionally render buttons based on ad_request status -->
+                            {% if ad_request.status == 'Pending' %}
+                                <form method="POST" action="{{ url_for('inf_update_request_status', ad_request_id=ad_request.id) }}" style="display:inline;">
+                                    <input type="hidden" name="status" value="Accepted">
+                                    <button type="submit" class="btn btn-success">Accept</button>
+                                </form>
+                                
+                                <form method="POST" action="{{ url_for('inf_update_request_status', ad_request_id=ad_request.id) }}" style="display:inline;">
+                                    <input type="hidden" name="status" value="Rejected">
+                                    <button type="submit" class="btn btn-danger">Reject</button>
+                                </form>
 
-                            <!-- Mark as Completed button -->
-                            <form method="POST" action="{{ url_for('influencer_update_ad_request', ad_request_id=ad_request.id) }}" style="display:inline;">
-                                <input type="hidden" name="status" value="completed">
-                                <button type="submit" class="btn btn-info">Completed</button>
+                            {% elif ad_request.status == 'Accepted' %}
+                                <form method="POST" action="{{ url_for('inf_update_request_status', ad_request_id=ad_request.id) }}" style="display:inline;">
+                                    <input type="hidden" name="status" value="Completed">
+                                    <button type="submit" class="btn btn-primary">Mark Completed</button>
+                                </form>
+
+                            {% elif ad_request.status == 'Rejected' %}
+                                <form method="POST" action="{{ url_for('influencer_delete_ad_request', ad_request_id=ad_request.id) }}" style="display:inline;">
+                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Update private Ad Request Modal -->
+                <div class="modal fade" id="updatePrivateAdRequestModal-{{ ad_request.id }}" tabindex="-1" role="dialog" aria-labelledby="updatePublicAdRequestModalLabel-{{ ad_request.id }}" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <form method="POST" action="{{ url_for('influencer_update_ad_request', ad_request_id=ad_request.id) }}">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="updatePublicAdRequestModalLabel-{{ ad_request.id }}">Update Ad Request</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="form-group">
+                                        <label for="details">Details</label>
+                                        <textarea class="form-control" id="details" name="details" rows="3" required>{{ ad_request.details }}</textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="payment_amount">Payment Amount</label>
+                                        <input type="number" class="form-control" id="payment_amount" name="payment_amount" value="{{ ad_request.payment_amount }}" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="ads_required">Ads Required</label>
+                                        <input type="number" class="form-control" id="ads_required" name="ads_required" value="{{ ad_request.ads_required }}" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="ads_completed">Ads Completed</label>
+                                        <input type="number" class="form-control" id="ads_completed" name="ads_completed" value="{{ ad_request.ads_completed }}" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="status">Status</label>
+                                        <select class="form-control" id="status" name="status" required>
+                                            <option value="Pending" {% if ad_request.status == 'Pending' %}selected{% endif %}>Pending</option>
+                                            <option value="Accepted" {% if ad_request.status == 'Accepted' %}selected{% endif %}>Accepted</option>
+                                            <option value="Rejected" {% if ad_request.status == 'Rejected' %}selected{% endif %}>Rejected</option>
+                                            <option value="Completed" {% if ad_request.status == 'Completed' %}selected{% endif %}>Completed</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary">Update Ad Request</button>
+                                </div>
                             </form>
                         </div>
                     </div>
@@ -139,7 +184,7 @@
 <div class="modal fade" id="createPublicAdRequestModal" tabindex="-1" role="dialog" aria-labelledby="createPublicAdRequestModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <form method="POST" action="{{ url_for('create_ad_request') }}">
+            <form method="POST" action="{{ url_for('create_public_request') }}">
                 <div class="modal-header">
                     <h5 class="modal-title" id="createPublicAdRequestModalLabel">Create Public Ad Request</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -151,7 +196,7 @@
                         <label for="campaign_id">Select Campaign</label>
                         <select class="form-control" id="campaign_id" name="campaign_id" required>
                             {% for campaign in public_campaigns %}
-                                <option value="{{ campaign.id }}">{{ campaign.title }}</option>
+                                <option value="{{ campaign.id }}" data-sponsor="{{ campaign.sponsor_id }}">{{ campaign.title }}</option>
                             {% endfor %}
                         </select>
                     </div>

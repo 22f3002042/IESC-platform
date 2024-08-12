@@ -21,7 +21,8 @@
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title">{{ campaign.title }}</h5>
-                                <p class="card-text">{{ campaign.description }}</p>
+                                <p class="card-text">Niche: {{ campaign.niche }}</p>
+                                <p class="card-text">Status: {{ campaign.status }}</p>
                                 <p class="card-text">Progress: {{ campaign.progress() }}%</p>
                                 <a href="{{ url_for('view_campaign', campaign_id=campaign.id) }}" class="btn btn-info">View</a>
                                 <!-- Trigger for Edit Campaign Modal -->
@@ -80,7 +81,12 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="status">Status</label>
-                                            <input type="text" class="form-control" id="status" name="status" value="{{ campaign.status }}">
+                                            <select class="form-control" id="status" name="status">
+                                                <option value="Active">Active</option>
+                                                <option value="Completed">Completed</option>
+                                                <option value="Paused">Paused</option>
+                                                <option value="Canceled">Canceled</option>
+                                            </select>
                                         </div>
                                         <div class="form-group">
                                             <label for="goals">Goals</label>
@@ -110,7 +116,8 @@
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title">{{ campaign.title }}</h5>
-                                <p class="card-text">{{ campaign.description }}</p>
+                                <p class="card-text">Niche: {{ campaign.niche }}</p>
+                                <p class="card-text">Status: {{ campaign.status }}</p>
                                 <p class="card-text">Progress: {{ campaign.progress() }}%</p>
                                 <a href="{{ url_for('view_campaign', campaign_id=campaign.id) }}" class="btn btn-info">View</a>
                                 <!-- Trigger for Edit Campaign Modal -->
@@ -169,8 +176,14 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="status">Status</label>
-                                            <input type="text" class="form-control" id="status" name="status" value="{{ campaign.status }}">
+                                            <select class="form-control" id="status" name="status">
+                                                <option value="Active">Active</option>
+                                                <option value="Completed">Completed</option>
+                                                <option value="Paused">Paused</option>
+                                                <option value="Canceled">Canceled</option>
+                                            </select>
                                         </div>
+                                        
                                         <div class="form-group">
                                             <label for="goals">Goals</label>
                                             <textarea class="form-control" id="goals" name="goals" rows="3">{{ campaign.goals }}</textarea>
@@ -234,7 +247,12 @@
                         </div>
                         <div class="form-group">
                             <label for="status">Status</label>
-                            <input type="text" class="form-control" id="status" name="status">
+                            <select class="form-control" id="status" name="status">
+                                <option value="Active">Active</option>
+                                <option value="Completed">Completed</option>
+                                <option value="Paused">Paused</option>
+                                <option value="Canceled">Canceled</option>
+                            </select>
                         </div>
                         <div class="form-group">
                             <label for="goals">Goals</label>
