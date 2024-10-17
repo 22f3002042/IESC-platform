@@ -45,8 +45,6 @@ All operations can be demonstrated locally on your machine.
     - A mock payment portal for ad requests.
 
 ### Project Structure
-
-//code
 ```graphql
 project/
 │
@@ -63,3 +61,5 @@ project/
 ├── run.py                   # Application entry point
 ├── requirements.txt         # Python dependencies
 └── README.md                # Project readme (this file)
+
+
