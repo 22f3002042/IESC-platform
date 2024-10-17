@@ -47,3 +47,19 @@ All operations can be demonstrated locally on your machine.
 ### Project Structure
 
 //code
+```graphql
+project/
+│
+├── app/
+│   ├── static/              # CSS, JS, images
+│   ├── templates/           # Jinja2 templates
+│   ├── __init__.py          # Flask application instance
+│   ├── models.py            # Database models (User, Campaign, AdRequest)
+│   ├── routes.py            # All routes for the app (Admin, Sponsor, Influencer)
+│   └── forms.py             # Flask-WTForms for forms validation
+│
+├── migrations/              # Database migrations
+├── config.py                # Application configuration
+├── run.py                   # Application entry point
+├── requirements.txt         # Python dependencies
+└── README.md                # Project readme (this file)
